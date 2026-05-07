@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    'health-topics': HealthTopic;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,6 +95,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'health-topics': HealthTopicsSelect<false> | HealthTopicsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -112,10 +114,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    homepage: Homepage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -782,6 +786,109 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Manage topic cards shown on the Topics page and their detail page content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "health-topics".
+ */
+export interface HealthTopic {
+  id: string;
+  /**
+   * Card title shown on the Topics overview page.
+   */
+  title: string;
+  /**
+   * URL path segment — must be lowercase with hyphens, e.g. "healthcare-system" → /topic/healthcare-system.
+   */
+  slug: string;
+  /**
+   * Short description shown below the card title.
+   */
+  description?: string | null;
+  /**
+   * Icon displayed on the topic card.
+   */
+  icon?:
+    | (
+        | 'Stethoscope'
+        | 'FlaskConical'
+        | 'HeartPulse'
+        | 'Brain'
+        | 'Users'
+        | 'ShieldPlus'
+        | 'Syringe'
+        | 'ClipboardCheck'
+        | 'BadgePlus'
+        | 'Hospital'
+        | 'PhoneCall'
+      )
+    | null;
+  /**
+   * Number of lessons to display on the card badge.
+   */
+  lessonsCount?: number | null;
+  /**
+   * Sort order on the overview page. Lower numbers appear first.
+   */
+  order?: number | null;
+  /**
+   * Subtitle / description shown below the page heading.
+   */
+  subtitle?: string | null;
+  /**
+   * Heading text in the left sidebar box.
+   */
+  sidebarTitle?: string | null;
+  /**
+   * Navigation items shown in the sidebar (e.g. sub-topic names).
+   */
+  sidebarItems?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Duration shown next to the "Watch Overview Video" badge.
+   */
+  videoDuration?: string | null;
+  /**
+   * Support phone number displayed in the bottom help strip.
+   */
+  supportPhone?: string | null;
+  /**
+   * Content sections displayed as cards on the detail page.
+   */
+  sections?:
+    | {
+        /**
+         * Section heading (e.g. "Family Doctors").
+         */
+        title: string;
+        /**
+         * One-to-two sentence description of this section.
+         */
+        description: string;
+        /**
+         * Full detail content shown on the section detail page when users click "Learn More".
+         */
+        details?: string | null;
+        /**
+         * Bullet points shown in the green "Key Points" panel.
+         */
+        keyPoints?:
+          | {
+              point: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -990,6 +1097,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'health-topics';
+        value: string | HealthTopic;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1358,6 +1469,44 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "health-topics_select".
+ */
+export interface HealthTopicsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  icon?: T;
+  lessonsCount?: T;
+  order?: T;
+  subtitle?: T;
+  sidebarTitle?: T;
+  sidebarItems?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  videoDuration?: T;
+  supportPhone?: T;
+  sections?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        details?: T;
+        keyPoints?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -1690,6 +1839,61 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Control the hero section and call-to-action content on the home page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: string;
+  /**
+   * Text inside the small pill badge above the main heading.
+   */
+  badgeText?: string | null;
+  /**
+   * Text BEFORE the highlighted (blue) portion of the heading.
+   */
+  headingStart?: string | null;
+  /**
+   * The highlighted (blue) portion of the heading.
+   */
+  headingHighlight?: string | null;
+  /**
+   * Text AFTER the highlighted portion.
+   */
+  headingEnd?: string | null;
+  /**
+   * Paragraph text below the main heading.
+   */
+  subheading?: string | null;
+  /**
+   * Small note below the CTA buttons.
+   */
+  footerNote?: string | null;
+  /**
+   * Text in the small badge at the bottom-right of the hero.
+   */
+  canadianBadgeText?: string | null;
+  /**
+   * Label for the primary (blue filled) button.
+   */
+  primaryCTALabel?: string | null;
+  /**
+   * URL the primary button links to.
+   */
+  primaryCTAUrl?: string | null;
+  /**
+   * Label for the secondary (outline) button.
+   */
+  secondaryCTALabel?: string | null;
+  /**
+   * URL the secondary button links to.
+   */
+  secondaryCTAUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -1731,6 +1935,26 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  badgeText?: T;
+  headingStart?: T;
+  headingHighlight?: T;
+  headingEnd?: T;
+  subheading?: T;
+  footerNote?: T;
+  canadianBadgeText?: T;
+  primaryCTALabel?: T;
+  primaryCTAUrl?: T;
+  secondaryCTALabel?: T;
+  secondaryCTAUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

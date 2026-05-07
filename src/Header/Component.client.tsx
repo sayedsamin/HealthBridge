@@ -25,7 +25,7 @@ export const HeaderClient: React.FC = () => {
 
   return (
     <header
-      className="container relative z-20 border-b border-slate-100 bg-white/80 backdrop-blur-md"
+      className="container relative z-20 border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-700/50 dark:bg-slate-900/80"
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="flex items-center justify-between gap-4 py-4">

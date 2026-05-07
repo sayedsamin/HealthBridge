@@ -7,15 +7,36 @@ import {
   Filter,
   FlaskConical,
   HeartPulse,
+  Hospital,
   MessageCircleQuestion,
+  PhoneCall,
   Search,
   ShieldPlus,
   Stethoscope,
   Syringe,
   Users,
+  type LucideIcon,
 } from 'lucide-react'
+import { fetchAllTopics } from './_utils/fetchTopicBySlug'
 
-const topics = [
+// ── Icon map: matches values from the HealthTopics Payload collection ──────────
+const ICON_MAP: Record<string, LucideIcon> = {
+  Stethoscope,
+  FlaskConical,
+  HeartPulse,
+  Brain,
+  Users,
+  ShieldPlus,
+  Syringe,
+  ClipboardCheck,
+  BadgePlus,
+  Hospital,
+  PhoneCall,
+  MessageCircleQuestion,
+}
+
+// ── Static fallback data (shown when no topics exist in the CMS yet) ──────────
+const STATIC_TOPICS = [
   {
     id: 'understanding-canadian-healthcare',
     slug: 'healthcare-system',
@@ -82,15 +103,30 @@ const topics = [
   },
 ]
 
-export default function TopicIndexPage() {
+export default async function TopicIndexPage() {
+  const cmsTopics = await fetchAllTopics()
+
+  // Use CMS data if available, otherwise fall back to static list
+  const topics =
+    cmsTopics.length > 0
+      ? cmsTopics.map((t) => ({
+          id: t.id,
+          slug: t.slug,
+          label: t.title,
+          desc: t.description ?? '',
+          lessons: t.lessonsCount ?? 10,
+          Icon: ICON_MAP[t.icon ?? ''] ?? Stethoscope,
+        }))
+      : STATIC_TOPICS
+
   return (
     <section className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_254px] lg:items-start">
         <div>
-          <h1 className="text-5xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
             Health Topics Overview
           </h1>
-          <p className="mt-2 text-2xl leading-snug text-slate-700">
+          <p className="mt-2 text-2xl leading-snug text-slate-700 dark:text-slate-300">
             Explore topics to learn, understand and stay healthy.
           </p>
 
@@ -100,7 +136,7 @@ export default function TopicIndexPage() {
               <input
                 type="text"
                 placeholder="Search topics..."
-                className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-base text-slate-700 outline-none ring-blue-500 transition focus:ring-2"
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-base text-slate-700 outline-none ring-blue-500 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-400"
               />
             </div>
             <button
@@ -113,16 +149,16 @@ export default function TopicIndexPage() {
           </div>
         </div>
 
-        <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/60">
           <div className="flex items-start gap-3">
-            <div className="rounded-2xl border border-blue-200 bg-white p-3 text-blue-700">
+            <div className="rounded-2xl border border-blue-200 bg-white p-3 text-blue-700 dark:border-blue-800 dark:bg-slate-700 dark:text-blue-400">
               <BadgePlus className="h-10 w-10" strokeWidth={1.75} />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold leading-tight text-slate-900">
+              <h2 className="text-2xl font-semibold leading-tight text-slate-900 dark:text-white">
                 Your Health Your Knowledge
               </h2>
-              <p className="mt-2 text-base leading-6 text-slate-600">
+              <p className="mt-2 text-base leading-6 text-slate-600 dark:text-slate-400">
                 Learn today for a healthier tomorrow.
               </p>
             </div>
@@ -135,22 +171,24 @@ export default function TopicIndexPage() {
           <Link
             key={t.id}
             href={`/topic/${t.slug}`}
-            className="group flex min-h-[250px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300"
+            className="group flex min-h-[250px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
           >
-            <div className="mb-3 flex h-28 items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100">
+            <div className="mb-3 flex h-28 items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 dark:border-slate-700 dark:from-blue-950 dark:via-sky-950 dark:to-slate-800">
               <t.Icon className="h-14 w-14 text-blue-700" strokeWidth={1.75} />
             </div>
 
             <div className="flex-1">
-              <h3 className="text-[33px] font-semibold leading-tight tracking-tight text-slate-900">
+              <h3 className="text-[33px] font-semibold leading-tight tracking-tight text-slate-900 dark:text-white">
                 {t.label}
               </h3>
-              <p className="mt-1 text-[16px] leading-6 text-slate-600">{t.desc}</p>
+              <p className="mt-1 text-[16px] leading-6 text-slate-600 dark:text-slate-400">
+                {t.desc}
+              </p>
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-blue-700">
+            <div className="mt-3 flex items-center justify-between text-blue-700 dark:text-blue-400">
               <p className="text-sm font-semibold">{t.lessons} Lessons</p>
-              <span className="rounded-full border border-blue-200 p-1.5 transition group-hover:bg-blue-50">
+              <span className="rounded-full border border-blue-200 p-1.5 transition group-hover:bg-blue-50 dark:border-blue-800 dark:group-hover:bg-blue-900/30">
                 <ArrowRight className="h-4 w-4" />
               </span>
             </div>
@@ -158,17 +196,17 @@ export default function TopicIndexPage() {
         ))}
       </div>
 
-      <div className="mt-1 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4">
+      <div className="mt-1 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 dark:border-blue-900 dark:bg-blue-950/40">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-full border border-blue-200 bg-white p-2 text-blue-700">
+            <div className="rounded-full border border-blue-200 bg-white p-2 text-blue-700 dark:border-blue-800 dark:bg-slate-800 dark:text-blue-400">
               <MessageCircleQuestion className="h-8 w-8" />
             </div>
             <div>
-              <p className="text-[28px] font-semibold tracking-tight text-slate-900">
+              <p className="text-[28px] font-semibold tracking-tight text-slate-900 dark:text-white">
                 Need help finding the right topic?
               </p>
-              <p className="text-sm leading-6 text-slate-600">
+              <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
                 Use our Ask a Question tool or chat with our support team.
               </p>
             </div>
@@ -177,7 +215,7 @@ export default function TopicIndexPage() {
           <div className="flex w-full gap-2 sm:w-auto">
             <button
               type="button"
-              className="flex-1 rounded-xl border border-blue-300 bg-white px-4 py-2.5 text-sm font-semibold text-blue-700 sm:flex-none"
+              className="flex-1 rounded-xl border border-blue-300 bg-white px-4 py-2.5 text-sm font-semibold text-blue-700 sm:flex-none dark:border-blue-700 dark:bg-slate-800 dark:text-blue-400"
             >
               Ask a Question
             </button>

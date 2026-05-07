@@ -54,6 +54,17 @@
     padding-inline: 1rem;
   }
 
+  .hero-bg-image {
+    background-image: url('/hero.webp');
+    background-position: 90% center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .not-found-title {
+    margin-bottom: 0;
+  }
+
   @variant sm {
     .container {
       max-width: var(--breakpoint-sm);
@@ -70,6 +81,10 @@
   @variant lg {
     .container {
       max-width: var(--breakpoint-lg);
+    }
+
+    .hero-bg-image {
+      background-size: 86% auto;
     }
   }
 

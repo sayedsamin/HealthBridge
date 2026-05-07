@@ -5,3 +5,10 @@
     display: none;
   }
 }
+
+.admin-bar__payload-root {
+  background-color: transparent;
+  padding: 0;
+  position: relative;
+  z-index: unset;
+}

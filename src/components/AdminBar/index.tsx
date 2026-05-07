@@ -56,7 +56,7 @@ export const AdminBar: React.FC<{
       <div className="container">
         <PayloadAdminBar
           {...adminBarProps}
-          className="py-2 text-white"
+          className="admin-bar__payload-root py-2 text-white"
           classNames={{
             controls: 'font-medium text-white',
             logo: 'text-white',
@@ -75,12 +75,6 @@ export const AdminBar: React.FC<{
               router.push('/')
               router.refresh()
             })
-          }}
-          style={{
-            backgroundColor: 'transparent',
-            padding: 0,
-            position: 'relative',
-            zIndex: 'unset',
           }}
         />
       </div>

@@ -26,8 +26,8 @@ export const Logo = (props: Props) => {
         <path d="M24 16V28" stroke="white" strokeWidth="3" strokeLinecap="round" />
         <path d="M18 22H30" stroke="white" strokeWidth="3" strokeLinecap="round" />
       </svg>
-      <span className="text-2xl font-semibold tracking-tight text-slate-900">
-        Health<span className="text-blue-600">Bridge</span>
+      <span className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        Health<span className="text-blue-600 dark:text-blue-400">Bridge</span>
       </span>
     </div>
   )

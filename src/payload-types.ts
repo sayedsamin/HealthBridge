@@ -806,7 +806,7 @@ export interface HealthTopic {
    */
   description?: string | null;
   /**
-   * Icon displayed on the topic card.
+   * Icon displayed on the topic card. If an image is uploaded below, the image takes priority over this selection.
    */
   icon?:
     | (
@@ -823,6 +823,10 @@ export interface HealthTopic {
         | 'PhoneCall'
       )
     | null;
+  /**
+   * Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: 128×128 px.
+   */
+  iconImage?: (string | null) | Media;
   /**
    * Number of lessons to display on the card badge.
    */
@@ -1476,6 +1480,7 @@ export interface HealthTopicsSelect<T extends boolean = true> {
   slug?: T;
   description?: T;
   icon?: T;
+  iconImage?: T;
   lessonsCount?: T;
   order?: T;
   subtitle?: T;

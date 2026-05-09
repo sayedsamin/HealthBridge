@@ -58,7 +58,19 @@ export const HealthTopics: CollectionConfig = {
         { label: 'Hospital', value: 'Hospital' },
         { label: 'Phone / Support', value: 'PhoneCall' },
       ],
-      admin: { description: 'Icon displayed on the topic card.' },
+      admin: {
+        description:
+          'Icon displayed on the topic card. If an image is uploaded below, the image takes priority over this selection.',
+      },
+    },
+    {
+      name: 'iconImage',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: 128×128 px.',
+      },
     },
     {
       name: 'lessonsCount',

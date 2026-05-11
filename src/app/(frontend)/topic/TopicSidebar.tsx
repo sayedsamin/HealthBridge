@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { getLocaleFromPathname, localizePath, stripLocaleFromPathname } from '@/i18n/routing'
 
 const topics = [
   { slug: 'healthcare-system', label: 'Healthcare System', icon: '🏥' },
@@ -14,6 +15,8 @@ const topics = [
 
 export function TopicSidebar() {
   const pathname = usePathname()
+  const locale = getLocaleFromPathname(pathname)
+  const activePathname = stripLocaleFromPathname(pathname)
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
@@ -23,11 +26,11 @@ export function TopicSidebar() {
       <nav className="flex flex-col gap-1">
         {topics.map((t) => {
           const href = `/topic/${t.slug}`
-          const isActive = pathname === href
+          const isActive = activePathname === href
           return (
             <Link
               key={t.slug}
-              href={href}
+              href={localizePath(href, locale)}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white'

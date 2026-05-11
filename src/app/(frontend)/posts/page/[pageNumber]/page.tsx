@@ -8,6 +8,8 @@ import { getPayload } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
+import { defaultLocale } from '@/i18n/config'
+import { getRequestLocale } from '@/i18n/server'
 
 export const revalidate = 600
 
@@ -19,6 +21,7 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise
+  const locale = await getRequestLocale()
   const payload = await getPayload({ config: configPromise })
 
   const sanitizedPageNumber = Number(pageNumber)
@@ -27,6 +30,8 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const posts = await payload.find({
     collection: 'posts',
+    locale,
+    fallbackLocale: defaultLocale,
     depth: 1,
     limit: 12,
     page: sanitizedPageNumber,

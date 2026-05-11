@@ -16,6 +16,7 @@ import { Homepage } from './globals/Homepage'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { defaultLocale, locales } from './i18n/config'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -65,6 +66,11 @@ export default buildConfig({
   collections: [Pages, Posts, Media, Categories, Users, HealthTopics],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Homepage],
+  localization: {
+    locales: [...locales],
+    defaultLocale,
+    fallback: true,
+  },
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

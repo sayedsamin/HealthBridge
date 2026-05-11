@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { fetchHomepageGlobal } from './_utils/fetchHomepage'
+import { getRequestLocale } from '@/i18n/server'
+import { localizePath } from '@/i18n/routing'
 
 // Static fallbacks — used when the admin has not yet populated the Homepage global
 const DEFAULTS = {
@@ -18,7 +20,8 @@ const DEFAULTS = {
 }
 
 export default async function HomePage() {
-  const cms = await fetchHomepageGlobal()
+  const locale = await getRequestLocale()
+  const cms = await fetchHomepageGlobal(locale)
 
   const d = {
     badgeText: cms?.badgeText || DEFAULTS.badgeText,
@@ -79,13 +82,13 @@ export default async function HomePage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href={d.primaryCTAUrl}
+                href={localizePath(d.primaryCTAUrl, locale)}
                 className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-blue-200/60 transition-colors hover:bg-blue-700"
               >
                 {d.primaryCTALabel}
               </Link>
               <Link
-                href={d.secondaryCTAUrl}
+                href={localizePath(d.secondaryCTAUrl, locale)}
                 className="rounded-full border border-blue-600 bg-white px-6 py-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 dark:bg-slate-800 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-slate-700"
               >
                 {d.secondaryCTALabel}

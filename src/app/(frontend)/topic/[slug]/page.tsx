@@ -5,6 +5,8 @@ import { getPayload } from 'payload'
 
 import { TopicDetailTemplate } from '../TopicDetailTemplate'
 import { fetchTopicBySlug, toTemplateProps } from '../_utils/fetchTopicBySlug'
+import { defaultLocale } from '@/i18n/config'
+import { getRequestLocale } from '@/i18n/server'
 
 type Args = {
   params: Promise<{ slug: string }>
@@ -14,8 +16,13 @@ type Args = {
 export async function generateStaticParams() {
   try {
     const payload = await getPayload({ config: configPromise })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await payload.find({ collection: 'health-topics' as any, limit: 200, depth: 0 })
+    const result = await payload.find({
+      collection: 'health-topics',
+      locale: defaultLocale,
+      fallbackLocale: defaultLocale,
+      limit: 200,
+      depth: 0,
+    })
     return result.docs.map((doc: { slug: string }) => ({ slug: doc.slug }))
   } catch {
     return []
@@ -24,7 +31,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
-  const topic = await fetchTopicBySlug(slug)
+  const locale = await getRequestLocale()
+  const topic = await fetchTopicBySlug(slug, locale)
   if (!topic) return {}
   return {
     title: topic.title,
@@ -34,9 +42,10 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 export default async function DynamicTopicPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
-  const topic = await fetchTopicBySlug(slug)
+  const locale = await getRequestLocale()
+  const topic = await fetchTopicBySlug(slug, locale)
 
   if (!topic) notFound()
 
-  return <TopicDetailTemplate {...toTemplateProps(topic)} />
+  return <TopicDetailTemplate {...toTemplateProps(topic)} locale={locale} />
 }

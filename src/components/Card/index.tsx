@@ -1,7 +1,9 @@
 'use client'
 import { cn } from '@/utilities/ui'
+import { getLocaleFromPathname, localizePath } from '@/i18n/routing'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React, { Fragment } from 'react'
 
 import type { Post } from '@/payload-types'
@@ -18,6 +20,8 @@ export const Card: React.FC<{
   showCategories?: boolean
   title?: string
 }> = (props) => {
+  const pathname = usePathname()
+  const locale = getLocaleFromPathname(pathname)
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
@@ -27,7 +31,7 @@ export const Card: React.FC<{
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = `/${relationTo}/${slug}`
+  const href = localizePath(`/${relationTo}/${slug}`, locale)
 
   return (
     <article

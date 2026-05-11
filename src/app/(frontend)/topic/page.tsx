@@ -19,6 +19,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { fetchAllTopics, type MediaFromPayload } from './_utils/fetchTopicBySlug'
+import { getRequestLocale } from '@/i18n/server'
+import { localizePath } from '@/i18n/routing'
 
 // ── Icon map: matches values from the HealthTopics Payload collection ──────────
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -105,7 +107,8 @@ const STATIC_TOPICS = [
 ]
 
 export default async function TopicIndexPage() {
-  const cmsTopics = await fetchAllTopics()
+  const locale = await getRequestLocale()
+  const cmsTopics = await fetchAllTopics(locale)
 
   // Use CMS data if available, otherwise fall back to static list
   const topics =
@@ -179,7 +182,7 @@ export default async function TopicIndexPage() {
         {topics.map((t) => (
           <Link
             key={t.id}
-            href={`/topic/${t.slug}`}
+            href={localizePath(`/topic/${t.slug}`, locale)}
             className="group flex min-h-[250px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
           >
             <div className="mb-3 flex h-28 items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 dark:border-slate-700 dark:from-blue-950 dark:via-sky-950 dark:to-slate-800">

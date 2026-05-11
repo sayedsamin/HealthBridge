@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { getLocaleFromPathname, localizePath, stripLocaleFromPathname } from '@/i18n/routing'
 
 const topicSubmenus = [
   { slug: 'healthcare-system', label: 'Healthcare System', icon: '🏥' },
@@ -19,6 +21,8 @@ export const HeaderNav: React.FC = () => {
   const [topicOpen, setTopicOpen] = useState(false)
   const [mobileTopicOpen, setMobileTopicOpen] = useState(false)
   const topicRef = useRef<HTMLDivElement>(null)
+  const locale = getLocaleFromPathname(pathname)
+  const activePathname = stripLocaleFromPathname(pathname)
 
   useEffect(() => {
     setMenuOpen(false)
@@ -36,14 +40,14 @@ export const HeaderNav: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const isTopicActive = pathname.startsWith('/topic')
+  const isTopicActive = activePathname.startsWith('/topic')
 
   return (
     <nav className="relative">
       {/* ── Desktop nav ─────────────────────────────────── */}
       <div className="hidden items-center gap-4 text-base md:flex">
         <Link
-          href="/"
+          href={localizePath('/', locale)}
           className="font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
         >
           Home
@@ -71,7 +75,7 @@ export const HeaderNav: React.FC = () => {
           {topicOpen && (
             <div className="absolute left-0 top-full z-40 mt-2 w-56 rounded-2xl border border-slate-200 bg-white py-2 shadow-xl dark:border-slate-700 dark:bg-slate-800">
               <Link
-                href="/topic"
+                href={localizePath('/topic', locale)}
                 className="block px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-slate-700"
                 onClick={() => setTopicOpen(false)}
               >
@@ -81,10 +85,10 @@ export const HeaderNav: React.FC = () => {
               {topicSubmenus.map((t) => (
                 <Link
                   key={t.slug}
-                  href={`/topic/${t.slug}`}
+                  href={localizePath(`/topic/${t.slug}`, locale)}
                   onClick={() => setTopicOpen(false)}
                   className={`flex items-center gap-2.5 px-4 py-2 text-sm transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-slate-700 dark:hover:text-blue-400 ${
-                    pathname === `/topic/${t.slug}`
+                    activePathname === `/topic/${t.slug}`
                       ? 'font-semibold text-blue-600 dark:text-blue-400'
                       : 'text-slate-700 dark:text-slate-300'
                   }`}
@@ -98,25 +102,25 @@ export const HeaderNav: React.FC = () => {
         </div>
 
         <Link
-          href="/resources"
+          href={localizePath('/resources', locale)}
           className="font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
         >
           Resources
         </Link>
         <Link
-          href="/about-us"
+          href={localizePath('/about-us', locale)}
           className="font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
         >
           About Us
         </Link>
         <div className="flex flex-col items-start gap-1">
           <Link
-            href="/sign-in"
+            href={localizePath('/sign-in', locale)}
             className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-200/60 transition-colors hover:bg-blue-700"
           >
             Sign In
           </Link>
-          {pathname !== '/' && (
+          {activePathname !== '/' && (
             <Link
               href="/admin"
               className="pl-2 text-xs font-medium text-blue-700 transition-colors hover:text-blue-900"
@@ -125,6 +129,7 @@ export const HeaderNav: React.FC = () => {
             </Link>
           )}
         </div>
+        <LanguageSwitcher />
       </div>
 
       {/* ── Hamburger button ────────────────────────────── */}
@@ -155,7 +160,7 @@ export const HeaderNav: React.FC = () => {
         >
           <div className="flex flex-col gap-2 text-sm">
             <Link
-              href="/"
+              href={localizePath('/', locale)}
               className="rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
             >
               Home
@@ -182,7 +187,7 @@ export const HeaderNav: React.FC = () => {
             {mobileTopicOpen && (
               <div className="ml-3 flex flex-col gap-1 border-l-2 border-blue-100 pl-3 dark:border-blue-800">
                 <Link
-                  href="/topic"
+                  href={localizePath('/topic', locale)}
                   className="rounded-lg px-3 py-2 text-xs font-semibold text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-slate-700/50"
                 >
                   All Topics
@@ -190,9 +195,9 @@ export const HeaderNav: React.FC = () => {
                 {topicSubmenus.map((t) => (
                   <Link
                     key={t.slug}
-                    href={`/topic/${t.slug}`}
+                    href={localizePath(`/topic/${t.slug}`, locale)}
                     className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors hover:bg-blue-50 hover:text-blue-700 ${
-                      pathname === `/topic/${t.slug}`
+                      activePathname === `/topic/${t.slug}`
                         ? 'font-semibold text-blue-600 dark:text-blue-400'
                         : 'text-slate-600 dark:text-slate-400'
                     }`}
@@ -205,25 +210,28 @@ export const HeaderNav: React.FC = () => {
             )}
 
             <Link
-              href="/resources"
+              href={localizePath('/resources', locale)}
               className="rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
             >
               Resources
             </Link>
             <Link
-              href="/about-us"
+              href={localizePath('/about-us', locale)}
               className="rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
             >
               About Us
             </Link>
             <div className="my-2 h-px bg-slate-200 dark:bg-slate-700" />
             <Link
-              href="/sign-in"
+              href={localizePath('/sign-in', locale)}
               className="rounded-full bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white shadow-sm shadow-blue-200/60 transition-colors hover:bg-blue-700"
             >
               Sign In
             </Link>
-            {pathname !== '/' && (
+            <div className="px-3 py-1">
+              <LanguageSwitcher className="inline-flex rounded-full border border-slate-200 bg-white p-0.5 text-xs font-semibold dark:border-slate-700 dark:bg-slate-900" />
+            </div>
+            {activePathname !== '/' && (
               <Link
                 href="/admin"
                 className="pt-1 text-center text-xs font-medium text-blue-700 transition-colors hover:text-blue-900"

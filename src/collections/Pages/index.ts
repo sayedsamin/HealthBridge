@@ -58,6 +58,7 @@ export const Pages: CollectionConfig<'pages'> = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       required: true,
     },
     {
@@ -73,6 +74,7 @@ export const Pages: CollectionConfig<'pages'> = {
               name: 'layout',
               type: 'blocks',
               blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              localized: true,
               required: true,
               admin: {
                 initCollapsed: true,

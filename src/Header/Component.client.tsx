@@ -1,5 +1,6 @@
 'use client'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { getLocaleFromPathname, localizePath } from '@/i18n/routing'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -12,6 +13,7 @@ export const HeaderClient: React.FC = () => {
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
+  const locale = getLocaleFromPathname(pathname)
 
   useEffect(() => {
     setHeaderTheme(null)
@@ -29,7 +31,7 @@ export const HeaderClient: React.FC = () => {
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="flex items-center justify-between gap-4 py-4">
-        <Link href="/">
+        <Link href={localizePath('/', locale)}>
           <Logo loading="eager" priority="high" />
         </Link>
         <HeaderNav />

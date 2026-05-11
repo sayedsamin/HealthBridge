@@ -5,6 +5,8 @@ import { ChevronLeft, CheckCircle2, Info } from 'lucide-react'
 
 import { fetchTopicBySlug } from '../../_utils/fetchTopicBySlug'
 import { slugify } from '../../_utils/slugify'
+import { getRequestLocale } from '@/i18n/server'
+import { localizePath } from '@/i18n/routing'
 
 type Args = {
   params: Promise<{ slug: string; section: string }>
@@ -19,7 +21,8 @@ function findSection(
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug, section } = await paramsPromise
-  const topic = await fetchTopicBySlug(slug)
+  const locale = await getRequestLocale()
+  const topic = await fetchTopicBySlug(slug, locale)
 
   if (!topic) return {}
 
@@ -34,7 +37,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 export default async function TopicSectionPage({ params: paramsPromise }: Args) {
   const { slug, section } = await paramsPromise
-  const topic = await fetchTopicBySlug(slug)
+  const locale = await getRequestLocale()
+  const topic = await fetchTopicBySlug(slug, locale)
 
   if (!topic) notFound()
 
@@ -48,7 +52,7 @@ export default async function TopicSectionPage({ params: paramsPromise }: Args) 
   return (
     <section className="space-y-5">
       <Link
-        href={`/topic/${slug}`}
+        href={localizePath(`/topic/${slug}`, locale)}
         className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 transition-colors hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
       >
         <ChevronLeft className="h-4 w-4" />

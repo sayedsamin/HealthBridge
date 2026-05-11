@@ -21,6 +21,7 @@ export const Homepage: GlobalConfig = {
           name: 'badgeText',
           type: 'text',
           defaultValue: 'Culturally Responsive Health Literacy',
+          localized: true,
           admin: { description: 'Text inside the small pill badge above the main heading.' },
         },
       ],
@@ -34,12 +35,14 @@ export const Homepage: GlobalConfig = {
           name: 'headingStart',
           type: 'text',
           defaultValue: 'Helping newcomers',
+          localized: true,
           admin: { description: 'Text BEFORE the highlighted (blue) portion of the heading.' },
         },
         {
           name: 'headingHighlight',
           type: 'text',
           defaultValue: 'navigate healthcare',
+          localized: true,
           admin: {
             description: 'The highlighted (blue) portion of the heading.',
           },
@@ -48,6 +51,7 @@ export const Homepage: GlobalConfig = {
           name: 'headingEnd',
           type: 'text',
           defaultValue: 'and safety in Canada.',
+          localized: true,
           admin: { description: 'Text AFTER the highlighted portion.' },
         },
       ],
@@ -62,18 +66,21 @@ export const Homepage: GlobalConfig = {
           type: 'textarea',
           defaultValue:
             'Access health services, understand lab results, improve wellness, and find trusted support - in your language.',
+          localized: true,
           admin: { description: 'Paragraph text below the main heading.' },
         },
         {
           name: 'footerNote',
           type: 'text',
           defaultValue: 'Free · Multilingual · Trusted by immigrants, students & newcomers',
+          localized: true,
           admin: { description: 'Small note below the CTA buttons.' },
         },
         {
           name: 'canadianBadgeText',
           type: 'text',
           defaultValue: '🍁 Canada-focused health guidance',
+          localized: true,
           admin: { description: 'Text in the small badge at the bottom-right of the hero.' },
         },
       ],
@@ -87,6 +94,7 @@ export const Homepage: GlobalConfig = {
           name: 'primaryCTALabel',
           type: 'text',
           defaultValue: 'Explore Health Topics',
+          localized: true,
           admin: { description: 'Label for the primary (blue filled) button.' },
         },
         {
@@ -99,6 +107,7 @@ export const Homepage: GlobalConfig = {
           name: 'secondaryCTALabel',
           type: 'text',
           defaultValue: 'Browse Resources',
+          localized: true,
           admin: { description: 'Label for the secondary (outline) button.' },
         },
         {

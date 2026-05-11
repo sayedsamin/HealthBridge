@@ -23,6 +23,7 @@ export const HealthTopics: CollectionConfig = {
     {
       name: 'title',
       type: 'text',
+      localized: true,
       required: true,
       admin: { description: 'Card title shown on the Topics overview page.' },
     },
@@ -39,6 +40,7 @@ export const HealthTopics: CollectionConfig = {
     {
       name: 'description',
       type: 'text',
+      localized: true,
       admin: { description: 'Short description shown below the card title.' },
     },
     {
@@ -98,12 +100,14 @@ export const HealthTopics: CollectionConfig = {
         {
           name: 'subtitle',
           type: 'text',
+          localized: true,
           admin: { description: 'Subtitle / description shown below the page heading.' },
         },
         {
           name: 'sidebarTitle',
           type: 'text',
           defaultValue: 'Topics Overview',
+          localized: true,
           admin: { description: 'Heading text in the left sidebar box.' },
         },
         {
@@ -118,6 +122,7 @@ export const HealthTopics: CollectionConfig = {
             {
               name: 'item',
               type: 'text',
+              localized: true,
               required: true,
             },
           ],
@@ -126,6 +131,7 @@ export const HealthTopics: CollectionConfig = {
           name: 'videoDuration',
           type: 'text',
           defaultValue: '3 min',
+          localized: true,
           admin: { description: 'Duration shown next to the "Watch Overview Video" badge.' },
         },
         {
@@ -148,18 +154,21 @@ export const HealthTopics: CollectionConfig = {
             {
               name: 'title',
               type: 'text',
+              localized: true,
               required: true,
               admin: { description: 'Section heading (e.g. "Family Doctors").' },
             },
             {
               name: 'description',
               type: 'textarea',
+              localized: true,
               required: true,
               admin: { description: 'One-to-two sentence description of this section.' },
             },
             {
               name: 'details',
               type: 'textarea',
+              localized: true,
               admin: {
                 description:
                   'Full detail content shown on the section detail page when users click "Learn More".',
@@ -176,6 +185,7 @@ export const HealthTopics: CollectionConfig = {
                 {
                   name: 'point',
                   type: 'text',
+                  localized: true,
                   required: true,
                 },
               ],

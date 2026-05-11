@@ -1,4 +1,5 @@
 import configPromise from '@payload-config'
+import { defaultLocale, type Locale } from '@/i18n/config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 
@@ -16,18 +17,22 @@ export type HomepageData = {
   secondaryCTAUrl?: string
 }
 
-async function getHomepageGlobal(): Promise<HomepageData | null> {
+async function getHomepageGlobal(locale: Locale): Promise<HomepageData | null> {
   try {
     const payload = await getPayload({ config: configPromise })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data = await payload.findGlobal({ slug: 'homepage' as any, depth: 0 })
+    const data = await payload.findGlobal({
+      slug: 'homepage',
+      depth: 0,
+      locale,
+      fallbackLocale: defaultLocale,
+    })
     return data as unknown as HomepageData
   } catch {
     return null
   }
 }
 
-export const fetchHomepageGlobal = (): Promise<HomepageData | null> =>
-  unstable_cache(() => getHomepageGlobal(), ['global_homepage'], {
-    tags: ['global_homepage'],
+export const fetchHomepageGlobal = (locale: Locale): Promise<HomepageData | null> =>
+  unstable_cache(() => getHomepageGlobal(locale), ['global_homepage', locale], {
+    tags: [`global_homepage_${locale}`, 'global_homepage'],
   })()

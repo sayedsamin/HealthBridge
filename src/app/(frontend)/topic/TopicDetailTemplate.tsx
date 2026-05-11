@@ -15,6 +15,8 @@ import {
 } from 'lucide-react'
 import { slugify } from './_utils/slugify'
 import { TopicSidebarButtons } from './TopicSidebarButtons'
+import { defaultLocale, type Locale } from '@/i18n/config'
+import { localizePath } from '@/i18n/routing'
 
 type TopicSection = {
   title: string
@@ -31,6 +33,7 @@ type TopicDetailTemplateProps = {
   activeSidebarLabel: string
   sidebarItems: string[]
   sections: TopicSection[]
+  locale?: Locale
   videoDuration?: string
   supportPhone?: string
 }
@@ -69,6 +72,7 @@ export function TopicDetailTemplate({
   activeSidebarLabel,
   sidebarItems,
   sections,
+  locale = defaultLocale,
   videoDuration = '3 min',
   supportPhone = '1-888-315-9257',
 }: TopicDetailTemplateProps) {
@@ -85,7 +89,7 @@ export function TopicDetailTemplate({
             {sidebarTitle}
           </h2>
           <Link
-            href="/topic"
+            href={localizePath('/topic', locale)}
             className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
           >
             &lt; Back to Topics
@@ -170,7 +174,7 @@ export function TopicDetailTemplate({
                     {section.description}
                   </p>
                   <Link
-                    href={`/topic/${topicSlug}/${slugify(section.title)}`}
+                    href={localizePath(`/topic/${topicSlug}/${slugify(section.title)}`, locale)}
                     className="mt-2 inline-flex text-sm font-semibold text-blue-700 dark:text-blue-400"
                   >
                     Learn More <span aria-hidden="true">→</span>

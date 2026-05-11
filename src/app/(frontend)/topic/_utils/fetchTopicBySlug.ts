@@ -1,7 +1,8 @@
 import configPromise from '@payload-config'
-import { defaultLocale, type Locale } from '@/i18n/config'
+import { defaultLocale, isCmsLocale, type Locale } from '@/i18n/config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
+import { translateContentDeep } from '@/utilities/translateContent'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -75,17 +76,68 @@ async function getAllTopics(locale: Locale): Promise<TopicFromPayload[]> {
   }
 }
 
+async function getTopicBySlugForLanguage(
+  slug: string,
+  locale: Locale,
+  targetLanguage: string,
+): Promise<TopicFromPayload | null> {
+  const topic = await getTopicBySlug(slug, locale)
+
+  if (!topic) {
+    return null
+  }
+
+  if (targetLanguage === defaultLocale || isCmsLocale(targetLanguage)) {
+    return topic
+  }
+
+  return translateContentDeep(topic, targetLanguage)
+}
+
+async function getAllTopicsForLanguage(
+  locale: Locale,
+  targetLanguage: string,
+): Promise<TopicFromPayload[]> {
+  const topics = await getAllTopics(locale)
+
+  if (targetLanguage === defaultLocale || isCmsLocale(targetLanguage)) {
+    return topics
+  }
+
+  return translateContentDeep(topics, targetLanguage)
+}
+
 // ─── Cached exports ───────────────────────────────────────────────────────────
 
-export const fetchTopicBySlug = (slug: string, locale: Locale): Promise<TopicFromPayload | null> =>
-  unstable_cache(() => getTopicBySlug(slug, locale), [`health-topic-${slug}`, locale], {
-    tags: [`health-topic-${slug}_${locale}`, `health-topic-${slug}`, 'health-topics'],
-  })()
+export const fetchTopicBySlug = (
+  slug: string,
+  locale: Locale,
+  targetLanguage: string = locale,
+): Promise<TopicFromPayload | null> =>
+  unstable_cache(
+    () => getTopicBySlugForLanguage(slug, locale, targetLanguage),
+    [`health-topic-${slug}`, locale, targetLanguage],
+    {
+      tags: [
+        `health-topic-${slug}_${locale}`,
+        `health-topic-${slug}_lang_${targetLanguage}`,
+        `health-topic-${slug}`,
+        'health-topics',
+      ],
+    },
+  )()
 
-export const fetchAllTopics = (locale: Locale): Promise<TopicFromPayload[]> =>
-  unstable_cache(() => getAllTopics(locale), ['health-topics-all', locale], {
-    tags: [`health-topics_${locale}`, 'health-topics'],
-  })()
+export const fetchAllTopics = (
+  locale: Locale,
+  targetLanguage: string = locale,
+): Promise<TopicFromPayload[]> =>
+  unstable_cache(
+    () => getAllTopicsForLanguage(locale, targetLanguage),
+    ['health-topics-all', locale, targetLanguage],
+    {
+      tags: [`health-topics_${locale}`, `health-topics_lang_${targetLanguage}`, 'health-topics'],
+    },
+  )()
 
 // ─── Converter: Payload → TopicDetailTemplate props ──────────────────────────
 

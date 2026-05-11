@@ -5,7 +5,7 @@ import { ChevronLeft, CheckCircle2, Info } from 'lucide-react'
 
 import { fetchTopicBySlug } from '../../_utils/fetchTopicBySlug'
 import { slugify } from '../../_utils/slugify'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 
 type Args = {
@@ -22,7 +22,8 @@ function findSection(
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug, section } = await paramsPromise
   const locale = await getRequestLocale()
-  const topic = await fetchTopicBySlug(slug, locale)
+  const language = await getRequestLanguage()
+  const topic = await fetchTopicBySlug(slug, locale, language)
 
   if (!topic) return {}
 
@@ -38,7 +39,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 export default async function TopicSectionPage({ params: paramsPromise }: Args) {
   const { slug, section } = await paramsPromise
   const locale = await getRequestLocale()
-  const topic = await fetchTopicBySlug(slug, locale)
+  const language = await getRequestLanguage()
+  const topic = await fetchTopicBySlug(slug, locale, language)
 
   if (!topic) notFound()
 

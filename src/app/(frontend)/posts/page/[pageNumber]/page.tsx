@@ -9,7 +9,8 @@ import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 import { defaultLocale } from '@/i18n/config'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
+import { translateContentDeep } from '@/utilities/translateContent'
 
 export const revalidate = 600
 
@@ -22,6 +23,7 @@ type Args = {
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise
   const locale = await getRequestLocale()
+  const language = await getRequestLanguage()
   const payload = await getPayload({ config: configPromise })
 
   const sanitizedPageNumber = Number(pageNumber)
@@ -38,6 +40,11 @@ export default async function Page({ params: paramsPromise }: Args) {
     overrideAccess: false,
   })
 
+  const translatedPosts = {
+    ...posts,
+    docs: await translateContentDeep(posts.docs, language),
+  }
+
   return (
     <div className="pt-24 pb-24">
       <PageClient />
@@ -50,17 +57,17 @@ export default async function Page({ params: paramsPromise }: Args) {
       <div className="container mb-8">
         <PageRange
           collection="posts"
-          currentPage={posts.page}
+          currentPage={translatedPosts.page}
           limit={12}
-          totalDocs={posts.totalDocs}
+          totalDocs={translatedPosts.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={translatedPosts.docs} />
 
       <div className="container">
-        {posts?.page && posts?.totalPages > 1 && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+        {translatedPosts?.page && translatedPosts?.totalPages > 1 && (
+          <Pagination page={translatedPosts.page} totalPages={translatedPosts.totalPages} />
         )}
       </div>
     </div>

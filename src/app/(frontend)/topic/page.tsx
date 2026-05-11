@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -17,7 +18,7 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react'
-import { fetchAllTopics } from './_utils/fetchTopicBySlug'
+import { fetchAllTopics, type MediaFromPayload } from './_utils/fetchTopicBySlug'
 
 // ── Icon map: matches values from the HealthTopics Payload collection ──────────
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -109,15 +110,23 @@ export default async function TopicIndexPage() {
   // Use CMS data if available, otherwise fall back to static list
   const topics =
     cmsTopics.length > 0
-      ? cmsTopics.map((t) => ({
-          id: t.id,
-          slug: t.slug,
-          label: t.title,
-          desc: t.description ?? '',
-          lessons: t.lessonsCount ?? 10,
-          Icon: ICON_MAP[t.icon ?? ''] ?? Stethoscope,
-        }))
-      : STATIC_TOPICS
+      ? cmsTopics.map((t) => {
+          const media =
+            t.iconImage && typeof t.iconImage === 'object'
+              ? (t.iconImage as MediaFromPayload)
+              : null
+          return {
+            id: t.id,
+            slug: t.slug,
+            label: t.title,
+            desc: t.description ?? '',
+            lessons: t.lessonsCount ?? 10,
+            Icon: ICON_MAP[t.icon ?? ''] ?? Stethoscope,
+            iconImageUrl: media?.url ?? null,
+            iconImageAlt: media?.alt ?? t.title,
+          }
+        })
+      : STATIC_TOPICS.map((t) => ({ ...t, iconImageUrl: null, iconImageAlt: '' }))
 
   return (
     <section className="space-y-4">
@@ -174,7 +183,17 @@ export default async function TopicIndexPage() {
             className="group flex min-h-[250px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
           >
             <div className="mb-3 flex h-28 items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 dark:border-slate-700 dark:from-blue-950 dark:via-sky-950 dark:to-slate-800">
-              <t.Icon className="h-14 w-14 text-blue-700" strokeWidth={1.75} />
+              {t.iconImageUrl ? (
+                <Image
+                  src={t.iconImageUrl}
+                  alt={t.iconImageAlt}
+                  width={56}
+                  height={56}
+                  className="h-14 w-14 object-contain"
+                />
+              ) : (
+                <t.Icon className="h-14 w-14 text-blue-700" strokeWidth={1.75} />
+              )}
             </div>
 
             <div className="flex-1">

@@ -12,12 +12,20 @@ export type TopicSectionFromPayload = {
   keyPoints?: Array<{ id?: string; point: string } | string>
 }
 
+export type MediaFromPayload = {
+  id: string
+  url?: string
+  filename?: string
+  alt?: string
+}
+
 export type TopicFromPayload = {
   id: string
   title: string
   slug: string
   description?: string
   icon?: string
+  iconImage?: MediaFromPayload | string | null
   lessonsCount?: number
   order?: number
   subtitle?: string
@@ -38,7 +46,7 @@ async function getTopicBySlug(slug: string): Promise<TopicFromPayload | null> {
       collection: 'health-topics' as any,
       where: { slug: { equals: slug } },
       limit: 1,
-      depth: 0,
+      depth: 1,
     })
     return (result.docs[0] as unknown as TopicFromPayload) ?? null
   } catch {
@@ -54,7 +62,7 @@ async function getAllTopics(): Promise<TopicFromPayload[]> {
       collection: 'health-topics' as any,
       sort: 'order',
       limit: 100,
-      depth: 0,
+      depth: 1,
     })
     return result.docs as unknown as TopicFromPayload[]
   } catch {

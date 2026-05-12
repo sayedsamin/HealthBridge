@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 import { TopicDetailTemplate } from '../TopicDetailTemplate'
 import { fetchTopicBySlug, toTemplateProps } from '../_utils/fetchTopicBySlug'
 import { defaultLocale } from '@/i18n/config'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 
 type Args = {
   params: Promise<{ slug: string }>
@@ -32,7 +32,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug } = await paramsPromise
   const locale = await getRequestLocale()
-  const topic = await fetchTopicBySlug(slug, locale)
+  const language = await getRequestLanguage()
+  const topic = await fetchTopicBySlug(slug, locale, language)
   if (!topic) return {}
   return {
     title: topic.title,
@@ -43,7 +44,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 export default async function DynamicTopicPage({ params: paramsPromise }: Args) {
   const { slug } = await paramsPromise
   const locale = await getRequestLocale()
-  const topic = await fetchTopicBySlug(slug, locale)
+  const language = await getRequestLanguage()
+  const topic = await fetchTopicBySlug(slug, locale, language)
 
   if (!topic) notFound()
 

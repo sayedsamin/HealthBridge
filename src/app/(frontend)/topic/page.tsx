@@ -19,7 +19,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { fetchAllTopics, type MediaFromPayload } from './_utils/fetchTopicBySlug'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 
 // ── Icon map: matches values from the HealthTopics Payload collection ──────────
@@ -108,7 +108,8 @@ const STATIC_TOPICS = [
 
 export default async function TopicIndexPage() {
   const locale = await getRequestLocale()
-  const cmsTopics = await fetchAllTopics(locale)
+  const language = await getRequestLanguage()
+  const cmsTopics = await fetchAllTopics(locale, language)
 
   // Use CMS data if available, otherwise fall back to static list
   const topics =

@@ -8,13 +8,15 @@ import { getPayload } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { defaultLocale } from '@/i18n/config'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
+import { translateContentDeep } from '@/utilities/translateContent'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
 
 export default async function Page() {
   const locale = await getRequestLocale()
+  const language = await getRequestLanguage()
   const payload = await getPayload({ config: configPromise })
 
   const posts = await payload.find({
@@ -32,6 +34,11 @@ export default async function Page() {
     },
   })
 
+  const translatedPosts = {
+    ...posts,
+    docs: await translateContentDeep(posts.docs, language),
+  }
+
   return (
     <div className="pt-24 pb-24">
       <PageClient />
@@ -44,17 +51,17 @@ export default async function Page() {
       <div className="container mb-8">
         <PageRange
           collection="posts"
-          currentPage={posts.page}
+          currentPage={translatedPosts.page}
           limit={12}
-          totalDocs={posts.totalDocs}
+          totalDocs={translatedPosts.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={translatedPosts.docs} />
 
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+        {translatedPosts.totalPages > 1 && translatedPosts.page && (
+          <Pagination page={translatedPosts.page} totalPages={translatedPosts.totalPages} />
         )}
       </div>
     </div>

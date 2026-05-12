@@ -1,5 +1,5 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 import Link from 'next/link'
 import React from 'react'
@@ -10,7 +10,8 @@ import { Logo } from '@/components/Logo/Logo'
 
 export async function Footer() {
   const locale = await getRequestLocale()
-  const footerData = await getCachedGlobal('footer', 1, locale)()
+  const language = await getRequestLanguage()
+  const footerData = await getCachedGlobal('footer', 1, locale, language)()
 
   const navItems = footerData?.navItems || []
 

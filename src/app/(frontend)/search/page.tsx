@@ -8,7 +8,8 @@ import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 import { defaultLocale } from '@/i18n/config'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
+import { translateContentDeep } from '@/utilities/translateContent'
 
 type Args = {
   searchParams: Promise<{
@@ -18,6 +19,7 @@ type Args = {
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
   const locale = await getRequestLocale()
+  const language = await getRequestLanguage()
   const payload = await getPayload({ config: configPromise })
 
   const posts = await payload.find({
@@ -64,6 +66,11 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       : {}),
   })
 
+  const translatedPosts = {
+    ...posts,
+    docs: await translateContentDeep(posts.docs, language),
+  }
+
   return (
     <div className="pt-24 pb-24">
       <PageClient />
@@ -77,8 +84,8 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+      {translatedPosts.totalDocs > 0 ? (
+        <CollectionArchive posts={translatedPosts.docs as CardPostData[]} />
       ) : (
         <div className="container">No results found.</div>
       )}

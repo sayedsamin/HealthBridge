@@ -1,6 +1,6 @@
 import { TopicDetailTemplate } from '../TopicDetailTemplate'
 import { fetchTopicBySlug, toTemplateProps } from '../_utils/fetchTopicBySlug'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 
 const SLUG = 'public-health'
 
@@ -63,7 +63,8 @@ const FALLBACK = {
 
 export default async function PublicHealthPage() {
   const locale = await getRequestLocale()
-  const cms = await fetchTopicBySlug(SLUG, locale)
+  const language = await getRequestLanguage()
+  const cms = await fetchTopicBySlug(SLUG, locale, language)
   const props = cms ? toTemplateProps(cms, FALLBACK.activeSidebarLabel) : FALLBACK
   return <TopicDetailTemplate {...props} locale={locale} />
 }

@@ -1,4 +1,5 @@
 import type { GlobalConfig } from 'payload'
+import { authenticated } from '@/access/authenticated'
 import { revalidateHomepage } from './hooks/revalidateHomepage'
 
 export const Homepage: GlobalConfig = {
@@ -10,6 +11,7 @@ export const Homepage: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: authenticated,
   },
   fields: [
     {

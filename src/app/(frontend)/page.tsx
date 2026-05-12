@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { fetchHomepageGlobal } from './_utils/fetchHomepage'
-import { getRequestLocale } from '@/i18n/server'
+import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 
 // Static fallbacks — used when the admin has not yet populated the Homepage global
@@ -21,7 +21,8 @@ const DEFAULTS = {
 
 export default async function HomePage() {
   const locale = await getRequestLocale()
-  const cms = await fetchHomepageGlobal(locale)
+  const language = await getRequestLanguage()
+  const cms = await fetchHomepageGlobal(locale, language)
 
   const d = {
     badgeText: cms?.badgeText || DEFAULTS.badgeText,

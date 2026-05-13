@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     'health-topics': HealthTopic;
+    'resource-items': ResourceItem;
     'admin-activities': AdminActivity;
     redirects: Redirect;
     forms: Form;
@@ -97,6 +98,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'health-topics': HealthTopicsSelect<false> | HealthTopicsSelect<true>;
+    'resource-items': ResourceItemsSelect<false> | ResourceItemsSelect<true>;
     'admin-activities': AdminActivitiesSelect<false> | AdminActivitiesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -122,11 +124,15 @@ export interface Config {
     header: Header;
     footer: Footer;
     homepage: Homepage;
+    about: About;
+    resources: Resource;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
   };
   locale: 'en' | 'fr' | 'zh' | 'hi';
   widgets: {
@@ -900,6 +906,50 @@ export interface HealthTopic {
   createdAt: string;
 }
 /**
+ * Manage the resource cards shown in the Browse Resources grid on the Resources page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resource-items".
+ */
+export interface ResourceItem {
+  id: string;
+  /**
+   * Card heading shown in the resource grid.
+   */
+  title: string;
+  /**
+   * URL segment used in /resources/[slug]. Must be lowercase with hyphens, e.g. "healthcare-services".
+   */
+  slug: string;
+  /**
+   * Short description shown on the card.
+   */
+  description: string;
+  /**
+   * Icon displayed on the resource card.
+   */
+  icon:
+    | 'Hospital'
+    | 'ShieldAlert'
+    | 'Brain'
+    | 'BookOpen'
+    | 'FlaskConical'
+    | 'Apple'
+    | 'Globe'
+    | 'HeartPulse'
+    | 'Pill'
+    | 'Users'
+    | 'FileText'
+    | 'Languages'
+    | 'PlayCircle';
+  /**
+   * Display order in the resource grid. Lower numbers appear first.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "admin-activities".
  */
@@ -1130,6 +1180,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'health-topics';
         value: string | HealthTopic;
+      } | null)
+    | ({
+        relationTo: 'resource-items';
+        value: string | ResourceItem;
       } | null)
     | ({
         relationTo: 'admin-activities';
@@ -1541,6 +1595,19 @@ export interface HealthTopicsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resource-items_select".
+ */
+export interface ResourceItemsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  icon?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "admin-activities_select".
  */
 export interface AdminActivitiesSelect<T extends boolean = true> {
@@ -1941,6 +2008,192 @@ export interface Homepage {
    * URL the secondary button links to.
    */
   secondaryCTAUrl?: string | null;
+  /**
+   * Heading for the popular resources section.
+   */
+  popularResourcesHeading?: string | null;
+  /**
+   * Description text shown below the section heading.
+   */
+  popularResourcesDescription?: string | null;
+  /**
+   * Label for the top-right section link.
+   */
+  popularResourcesViewAllLabel?: string | null;
+  /**
+   * URL for the top-right section link.
+   */
+  popularResourcesViewAllUrl?: string | null;
+  /**
+   * Cards shown in Popular Resources on Home and Resources pages.
+   */
+  popularResources?:
+    | {
+        /**
+         * Unique id for this card (e.g., lab-tests).
+         */
+        id: string;
+        title: string;
+        description: string;
+        /**
+         * Target URL (e.g., /posts, /search).
+         */
+        href: string;
+        icon: 'FlaskConical' | 'Salad' | 'HelpingHand' | 'FileText' | 'ShieldCheck' | 'MessageCircleQuestion';
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Manage the About page content displayed to site visitors.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: string;
+  /**
+   * Main heading for the hero section.
+   */
+  heroTitle: string;
+  /**
+   * Subtitle shown below the hero title.
+   */
+  heroSubtitle?: string | null;
+  /**
+   * Background or featured image for the hero section.
+   */
+  heroImage?: (string | null) | Media;
+  /**
+   * Section heading for mission statement.
+   */
+  missionTitle?: string | null;
+  /**
+   * Full mission statement text.
+   */
+  missionDescription?: string | null;
+  /**
+   * Section heading for vision statement.
+   */
+  visionTitle?: string | null;
+  /**
+   * Full vision statement text.
+   */
+  visionDescription?: string | null;
+  coreValues?:
+    | {
+        /**
+         * Value name (e.g., "Accessibility").
+         */
+        title: string;
+        /**
+         * Explanation of this core value.
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Section heading for team/organization info.
+   */
+  teamTitle?: string | null;
+  /**
+   * Overview of team or organization.
+   */
+  teamDescription?: string | null;
+  teamMembers?:
+    | {
+        /**
+         * Full name of team member.
+         */
+        name: string;
+        /**
+         * Job title or role (e.g., "Program Director").
+         */
+        role: string;
+        /**
+         * Short bio or background.
+         */
+        bio?: string | null;
+        /**
+         * Profile photo.
+         */
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * CTA section heading.
+   */
+  ctaTitle?: string | null;
+  /**
+   * CTA description text.
+   */
+  ctaDescription?: string | null;
+  /**
+   * Label for primary CTA button.
+   */
+  ctaButtonLabel?: string | null;
+  /**
+   * URL for CTA button.
+   */
+  ctaButtonUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Manage Resources page content shown on the client app.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: string;
+  heroBadge?: string | null;
+  title: string;
+  intro?: string | null;
+  heroPrimaryLabel?: string | null;
+  heroPrimaryHref?: string | null;
+  heroSecondaryLabel?: string | null;
+  heroSecondaryHref?: string | null;
+  browseTitle?: string | null;
+  browseDescription?: string | null;
+  featuredLinks?:
+    | {
+        title: string;
+        description: string;
+        href: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  supportCards?:
+    | {
+        title: string;
+        bullets?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  emergencyTitle?: string | null;
+  emergencyDescription?: string | null;
+  emergencyPrimaryLabel?: string | null;
+  emergencyPrimaryHref?: string | null;
+  emergencySecondaryLabel?: string | null;
+  emergencySecondaryHref?: string | null;
+  ctaTitle?: string | null;
+  ctaDescription?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  ctaSecondaryLabel?: string | null;
+  ctaSecondaryHref?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2006,6 +2259,110 @@ export interface HomepageSelect<T extends boolean = true> {
   primaryCTAUrl?: T;
   secondaryCTALabel?: T;
   secondaryCTAUrl?: T;
+  popularResourcesHeading?: T;
+  popularResourcesDescription?: T;
+  popularResourcesViewAllLabel?: T;
+  popularResourcesViewAllUrl?: T;
+  popularResources?:
+    | T
+    | {
+        id?: T;
+        title?: T;
+        description?: T;
+        href?: T;
+        icon?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  heroTitle?: T;
+  heroSubtitle?: T;
+  heroImage?: T;
+  missionTitle?: T;
+  missionDescription?: T;
+  visionTitle?: T;
+  visionDescription?: T;
+  coreValues?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  teamTitle?: T;
+  teamDescription?: T;
+  teamMembers?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        bio?: T;
+        image?: T;
+        id?: T;
+      };
+  ctaTitle?: T;
+  ctaDescription?: T;
+  ctaButtonLabel?: T;
+  ctaButtonUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  heroBadge?: T;
+  title?: T;
+  intro?: T;
+  heroPrimaryLabel?: T;
+  heroPrimaryHref?: T;
+  heroSecondaryLabel?: T;
+  heroSecondaryHref?: T;
+  browseTitle?: T;
+  browseDescription?: T;
+  featuredLinks?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        href?: T;
+        label?: T;
+        id?: T;
+      };
+  supportCards?:
+    | T
+    | {
+        title?: T;
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  emergencyTitle?: T;
+  emergencyDescription?: T;
+  emergencyPrimaryLabel?: T;
+  emergencyPrimaryHref?: T;
+  emergencySecondaryLabel?: T;
+  emergencySecondaryHref?: T;
+  ctaTitle?: T;
+  ctaDescription?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
+  ctaSecondaryLabel?: T;
+  ctaSecondaryHref?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2037,7 +2394,7 @@ export interface TaskSchedulePublish {
           relationTo: 'posts';
           value: string | Post;
         } | null);
-    global?: string | null;
+    global?: ('homepage' | 'resources') | null;
     user?: (string | null) | User;
   };
   output?: unknown;

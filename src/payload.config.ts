@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
 import { HealthTopics } from './collections/HealthTopics'
+import { ResourceItems } from './collections/ResourceItems'
 import { Media } from './collections/Media'
 import { AdminActivities } from './collections/AdminActivities'
 import { Pages } from './collections/Pages'
@@ -14,6 +15,8 @@ import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Homepage } from './globals/Homepage'
+import { About } from './globals/About'
+import { Resources } from './globals/Resources'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -22,11 +25,13 @@ import { defaultLocale, locales } from './i18n/config'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const databaseTarget = (process.env.DATABASE_TARGET || 'local').toLowerCase()
-const databaseURL =
-  databaseTarget === 'remote'
-    ? process.env.REMOTE_DATABASE_URL || process.env.DATABASE_URL || ''
-    : process.env.LOCAL_DATABASE_URL || process.env.DATABASE_URL || ''
+const databaseURL = process.env.REMOTE_DATABASE_URL || process.env.DATABASE_URL
+
+if (!databaseURL) {
+  throw new Error(
+    'Missing remote MongoDB connection string. Set REMOTE_DATABASE_URL (or DATABASE_URL).',
+  )
+}
 
 export default buildConfig({
   admin: {
@@ -70,9 +75,18 @@ export default buildConfig({
   db: mongooseAdapter({
     url: databaseURL,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, HealthTopics, AdminActivities],
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    HealthTopics,
+    ResourceItems,
+    AdminActivities,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Homepage],
+  globals: [Header, Footer, Homepage, About, Resources],
   localization: {
     locales: [...locales],
     defaultLocale,

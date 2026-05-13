@@ -16,6 +16,17 @@ export type HomepageData = {
   primaryCTAUrl?: string
   secondaryCTALabel?: string
   secondaryCTAUrl?: string
+  popularResourcesHeading?: string
+  popularResourcesDescription?: string
+  popularResourcesViewAllLabel?: string
+  popularResourcesViewAllUrl?: string
+  popularResources?: Array<{
+    id: string
+    title: string
+    description: string
+    href: string
+    icon: string
+  }>
 }
 
 async function getHomepageGlobal(locale: Locale): Promise<HomepageData | null> {

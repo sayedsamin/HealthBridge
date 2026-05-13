@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     'health-topics': HealthTopic;
+    'admin-activities': AdminActivity;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'health-topics': HealthTopicsSelect<false> | HealthTopicsSelect<true>;
+    'admin-activities': AdminActivitiesSelect<false> | AdminActivitiesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -899,6 +901,24 @@ export interface HealthTopic {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admin-activities".
+ */
+export interface AdminActivity {
+  id: string;
+  summary: string;
+  action: 'create' | 'update' | 'delete';
+  entityScope: 'collection' | 'global';
+  entitySlug: string;
+  entityId?: string | null;
+  entityTitle?: string | null;
+  actor?: (string | null) | User;
+  actorName: string;
+  locale?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1110,6 +1130,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'health-topics';
         value: string | HealthTopic;
+      } | null)
+    | ({
+        relationTo: 'admin-activities';
+        value: string | AdminActivity;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1512,6 +1536,23 @@ export interface HealthTopicsSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admin-activities_select".
+ */
+export interface AdminActivitiesSelect<T extends boolean = true> {
+  summary?: T;
+  action?: T;
+  entityScope?: T;
+  entitySlug?: T;
+  entityId?: T;
+  entityTitle?: T;
+  actor?: T;
+  actorName?: T;
+  locale?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
+import { logCollectionAfterChange, logCollectionAfterDelete } from '@/hooks/adminActivity'
 import { revalidateHealthTopics } from './hooks/revalidateHealthTopics'
 import { toKebabCase } from '@/utilities/toKebabCase'
 
@@ -214,6 +215,7 @@ export const HealthTopics: CollectionConfig = {
     },
   ],
   hooks: {
-    afterChange: [revalidateHealthTopics],
+    afterChange: [revalidateHealthTopics, logCollectionAfterChange('health-topics')],
+    afterDelete: [logCollectionAfterDelete('health-topics')],
   },
 }

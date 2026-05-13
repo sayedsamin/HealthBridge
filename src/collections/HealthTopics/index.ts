@@ -3,6 +3,17 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { revalidateHealthTopics } from './hooks/revalidateHealthTopics'
+import { toKebabCase } from '@/utilities/toKebabCase'
+
+const normalizeTopicSlug = (value: unknown): string => {
+  if (typeof value !== 'string') return ''
+
+  return toKebabCase(value)
+    .trim()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
 
 export const HealthTopics: CollectionConfig = {
   slug: 'health-topics',
@@ -32,6 +43,13 @@ export const HealthTopics: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+      hooks: {
+        beforeValidate: [
+          ({ value }) => {
+            return normalizeTopicSlug(value)
+          },
+        ],
+      },
       admin: {
         description:
           'URL path segment — must be lowercase with hyphens, e.g. "healthcare-system" → /topic/healthcare-system.',
@@ -71,7 +89,7 @@ export const HealthTopics: CollectionConfig = {
       relationTo: 'media',
       admin: {
         description:
-          'Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: 128×128 px.',
+          'Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: at least 256x256 px (square).',
       },
     },
     {

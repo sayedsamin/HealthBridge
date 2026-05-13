@@ -21,6 +21,12 @@ import { defaultLocale, locales } from './i18n/config'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const databaseTarget = (process.env.DATABASE_TARGET || 'local').toLowerCase()
+const databaseURL =
+  databaseTarget === 'remote'
+    ? process.env.REMOTE_DATABASE_URL || process.env.DATABASE_URL || ''
+    : process.env.LOCAL_DATABASE_URL || process.env.DATABASE_URL || ''
+
 export default buildConfig({
   admin: {
     components: {
@@ -61,7 +67,7 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: mongooseAdapter({
-    url: process.env.DATABASE_URL || '',
+    url: databaseURL,
   }),
   collections: [Pages, Posts, Media, Categories, Users, HealthTopics],
   cors: [getServerSideURL()].filter(Boolean),

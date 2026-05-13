@@ -829,7 +829,7 @@ export interface HealthTopic {
       )
     | null;
   /**
-   * Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: 128×128 px.
+   * Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: at least 256x256 px (square).
    */
   iconImage?: (string | null) | Media;
   /**

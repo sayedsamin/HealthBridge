@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import { TopicDetailTemplate } from '../TopicDetailTemplate'
 import { fetchTopicBySlug, toTemplateProps } from '../_utils/fetchTopicBySlug'
 import { defaultLocale } from '@/i18n/config'
+import { localizePath } from '@/i18n/routing'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 
 type Args = {
@@ -47,7 +48,9 @@ export default async function DynamicTopicPage({ params: paramsPromise }: Args) 
   const language = await getRequestLanguage()
   const topic = await fetchTopicBySlug(slug, locale, language)
 
-  if (!topic) notFound()
+  if (!topic) {
+    redirect(localizePath(`/topic?missingTopic=${encodeURIComponent(slug)}`, locale))
+  }
 
   return <TopicDetailTemplate {...toTemplateProps(topic)} locale={locale} />
 }

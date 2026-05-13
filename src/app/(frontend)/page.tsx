@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { fetchHomepageGlobal } from './_utils/fetchHomepage'
+import { fetchAllTopics, type MediaFromPayload } from './topic/_utils/fetchTopicBySlug'
+import { HomeTopicsAndResources, type HomeTopic } from './_components/HomeTopicsAndResources'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 
@@ -19,10 +21,50 @@ const DEFAULTS = {
   canadianBadgeText: '🍁 Canada-focused health guidance',
 }
 
+const TOPIC_FALLBACKS: HomeTopic[] = [
+  {
+    id: 'healthcare-system',
+    title: 'Understanding Canadian Healthcare',
+    description: 'Learn how the healthcare system works in Canada.',
+    slug: 'healthcare-system',
+    icon: 'Stethoscope',
+    iconImageUrl: null,
+    iconImageAlt: 'Healthcare',
+  },
+  {
+    id: 'mental-health',
+    title: 'Mental Health Support',
+    description: 'Find resources and tips to support your well-being.',
+    slug: 'mental-health',
+    icon: 'Brain',
+    iconImageUrl: null,
+    iconImageAlt: 'Mental Health',
+  },
+  {
+    id: 'nutrition',
+    title: 'Nutrition and Healthy Living',
+    description: 'Discover healthy choices for you and your family.',
+    slug: 'nutrition',
+    icon: 'HeartPulse',
+    iconImageUrl: null,
+    iconImageAlt: 'Nutrition',
+  },
+  {
+    id: 'youth-health',
+    title: 'Youth Education and Safety',
+    description: 'Important information for youth and teens.',
+    slug: 'youth-health',
+    icon: 'Users',
+    iconImageUrl: null,
+    iconImageAlt: 'Youth Health',
+  },
+]
+
 export default async function HomePage() {
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
   const cms = await fetchHomepageGlobal(locale, language)
+  const cmsTopics = await fetchAllTopics(locale, language)
 
   const d = {
     badgeText: cms?.badgeText || DEFAULTS.badgeText,
@@ -37,6 +79,26 @@ export default async function HomePage() {
     footerNote: cms?.footerNote || DEFAULTS.footerNote,
     canadianBadgeText: cms?.canadianBadgeText || DEFAULTS.canadianBadgeText,
   }
+
+  const homeTopics =
+    cmsTopics.length > 0
+      ? cmsTopics.map((topic) => {
+          const media =
+            topic.iconImage && typeof topic.iconImage === 'object'
+              ? (topic.iconImage as MediaFromPayload)
+              : null
+
+          return {
+            id: topic.id,
+            title: topic.title,
+            description: topic.description ?? 'Explore this health topic.',
+            slug: topic.slug,
+            icon: topic.icon ?? null,
+            iconImageUrl: media?.url ?? null,
+            iconImageAlt: media?.alt ?? topic.title,
+          }
+        })
+      : TOPIC_FALLBACKS
 
   return (
     <main className="min-h-screen overflow-x-clip bg-white dark:bg-slate-950">
@@ -105,6 +167,8 @@ export default async function HomePage() {
           {d.canadianBadgeText}
         </div>
       </section>
+
+      <HomeTopicsAndResources locale={locale} topics={homeTopics} />
     </main>
   )
 }

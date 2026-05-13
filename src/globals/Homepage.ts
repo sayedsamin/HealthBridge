@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { authenticated } from '@/access/authenticated'
+import { logGlobalAfterChange } from '@/hooks/adminActivity'
 import { revalidateHomepage } from './hooks/revalidateHomepage'
 
 export const Homepage: GlobalConfig = {
@@ -122,6 +123,6 @@ export const Homepage: GlobalConfig = {
     },
   ],
   hooks: {
-    afterChange: [revalidateHomepage],
+    afterChange: [revalidateHomepage, logGlobalAfterChange('homepage')],
   },
 }

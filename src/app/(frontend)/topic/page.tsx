@@ -19,8 +19,11 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { fetchAllTopics, type MediaFromPayload } from './_utils/fetchTopicBySlug'
+import { TopicRedirectNotice } from './TopicRedirectNotice'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
+import type { Locale } from '@/i18n/config'
+import { getTopicAccent } from './_utils/topicVisuals'
 
 // ── Icon map: matches values from the HealthTopics Payload collection ──────────
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -36,6 +39,16 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Hospital,
   PhoneCall,
   MessageCircleQuestion,
+}
+
+const toTopicHref = (rawSlug: string, locale: Locale): string => {
+  const normalizedSlug = rawSlug.trim()
+
+  if (!normalizedSlug) {
+    return localizePath('/topic', locale)
+  }
+
+  return localizePath(`/topic/${encodeURIComponent(normalizedSlug)}`, locale)
 }
 
 // ── Static fallback data (shown when no topics exist in the CMS yet) ──────────
@@ -134,6 +147,11 @@ export default async function TopicIndexPage() {
 
   return (
     <section className="space-y-4">
+      <TopicRedirectNotice
+        locale={locale}
+        topics={topics.map((topic) => ({ id: topic.id, slug: topic.slug, label: topic.label }))}
+      />
+
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_254px] lg:items-start">
         <div>
           <h1 className="text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -180,43 +198,53 @@ export default async function TopicIndexPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {topics.map((t) => (
-          <Link
-            key={t.id}
-            href={localizePath(`/topic/${t.slug}`, locale)}
-            className="group flex min-h-[250px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
-          >
-            <div className="mb-3 flex h-28 items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 dark:border-slate-700 dark:from-blue-950 dark:via-sky-950 dark:to-slate-800">
-              {t.iconImageUrl ? (
-                <Image
-                  src={t.iconImageUrl}
-                  alt={t.iconImageAlt}
-                  width={56}
-                  height={56}
-                  className="h-14 w-14 object-contain"
-                />
-              ) : (
-                <t.Icon className="h-14 w-14 text-blue-700" strokeWidth={1.75} />
-              )}
-            </div>
+        {topics.map((t) => {
+          const topicAccent = getTopicAccent(t.slug)
 
-            <div className="flex-1">
-              <h3 className="text-[33px] font-semibold leading-tight tracking-tight text-slate-900 dark:text-white">
-                {t.label}
-              </h3>
-              <p className="mt-1 text-[16px] leading-6 text-slate-600 dark:text-slate-400">
-                {t.desc}
-              </p>
-            </div>
+          return (
+            <Link
+              key={t.id}
+              href={toTopicHref(t.slug, locale)}
+              className={`group flex min-h-[250px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 ${topicAccent.card}`}
+            >
+              <div
+                className={`mb-4 flex h-36 items-center rounded-xl bg-gradient-to-br px-5 ${topicAccent.panel}`}
+              >
+                <span
+                  className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
+                >
+                  {t.iconImageUrl ? (
+                    <Image
+                      src={t.iconImageUrl}
+                      alt={t.iconImageAlt}
+                      width={58}
+                      height={58}
+                      className="h-14 w-14 object-contain"
+                    />
+                  ) : (
+                    <t.Icon className="h-10 w-10" strokeWidth={1.85} />
+                  )}
+                </span>
+              </div>
 
-            <div className="mt-3 flex items-center justify-between text-blue-700 dark:text-blue-400">
-              <p className="text-sm font-semibold">{t.lessons} Lessons</p>
-              <span className="rounded-full border border-blue-200 p-1.5 transition group-hover:bg-blue-50 dark:border-blue-800 dark:group-hover:bg-blue-900/30">
-                <ArrowRight className="h-4 w-4" />
-              </span>
-            </div>
-          </Link>
-        ))}
+              <div className="flex-1">
+                <h3 className="text-[33px] font-semibold leading-tight tracking-tight text-slate-900 dark:text-white">
+                  {t.label}
+                </h3>
+                <p className="mt-1 text-[16px] leading-6 text-slate-600 dark:text-slate-400">
+                  {t.desc}
+                </p>
+              </div>
+
+              <div className={`mt-3 flex items-center justify-between ${topicAccent.arrow}`}>
+                <p className="text-sm font-semibold">{t.lessons} Lessons</p>
+                <span className="rounded-full border border-current/25 p-1.5 transition group-hover:bg-white/60 dark:group-hover:bg-slate-900/30">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </Link>
+          )
+        })}
       </div>
 
       <div className="mt-1 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 dark:border-blue-900 dark:bg-blue-950/40">

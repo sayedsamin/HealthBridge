@@ -3,6 +3,7 @@ import { defaultLocale, isCmsLocale, type Locale } from '@/i18n/config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { translateContentDeep } from '@/utilities/translateContent'
+import { toKebabCase } from '@/utilities/toKebabCase'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -42,13 +43,34 @@ export type TopicFromPayload = {
 
 async function getTopicBySlug(slug: string, locale: Locale): Promise<TopicFromPayload | null> {
   try {
+    const safeDecode = (value: string): string => {
+      try {
+        return decodeURIComponent(value)
+      } catch {
+        return value
+      }
+    }
+
+    const normalizeSlug = (value: string): string =>
+      toKebabCase(value)
+        .trim()
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '')
+
+    const decodedSlug = safeDecode(slug)
+    const normalizedSlug = normalizeSlug(decodedSlug)
+    const slugCandidates = Array.from(
+      new Set([slug, decodedSlug, decodedSlug.trim(), normalizedSlug].filter(Boolean)),
+    )
+
     const payload = await getPayload({ config: configPromise })
     const result = await payload.find({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       collection: 'health-topics' as any,
       locale,
       fallbackLocale: defaultLocale,
-      where: { slug: { equals: slug } },
+      where: { slug: { in: slugCandidates } },
       limit: 1,
       depth: 1,
     })

@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { logCollectionAfterChange, logCollectionAfterDelete } from '@/hooks/adminActivity'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -79,5 +80,9 @@ export const Media: CollectionConfig = {
         crop: 'center',
       },
     ],
+  },
+  hooks: {
+    afterChange: [logCollectionAfterChange('media')],
+    afterDelete: [logCollectionAfterDelete('media')],
   },
 }

@@ -2,6 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 import { link } from '@/fields/link'
 import { authenticated } from '@/access/authenticated'
+import { logGlobalAfterChange } from '@/hooks/adminActivity'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
@@ -29,6 +30,6 @@ export const Header: GlobalConfig = {
     },
   ],
   hooks: {
-    afterChange: [revalidateHeader],
+    afterChange: [revalidateHeader, logGlobalAfterChange('header')],
   },
 }

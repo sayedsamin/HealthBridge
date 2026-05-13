@@ -1,5 +1,8 @@
 import Link from 'next/link'
+import { fetchRecentAdminActivity } from './_utils/fetchAdminActivity'
 import { fetchHomepageGlobal } from './_utils/fetchHomepage'
+import { fetchAllTopics, type MediaFromPayload } from './topic/_utils/fetchTopicBySlug'
+import { HomeTopicsAndResources, type HomeTopic } from './_components/HomeTopicsAndResources'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 
@@ -19,10 +22,51 @@ const DEFAULTS = {
   canadianBadgeText: '🍁 Canada-focused health guidance',
 }
 
+const TOPIC_FALLBACKS: HomeTopic[] = [
+  {
+    id: 'healthcare-system',
+    title: 'Understanding Canadian Healthcare',
+    description: 'Learn how the healthcare system works in Canada.',
+    slug: 'healthcare-system',
+    icon: 'Stethoscope',
+    iconImageUrl: null,
+    iconImageAlt: 'Healthcare',
+  },
+  {
+    id: 'mental-health',
+    title: 'Mental Health Support',
+    description: 'Find resources and tips to support your well-being.',
+    slug: 'mental-health',
+    icon: 'Brain',
+    iconImageUrl: null,
+    iconImageAlt: 'Mental Health',
+  },
+  {
+    id: 'nutrition',
+    title: 'Nutrition and Healthy Living',
+    description: 'Discover healthy choices for you and your family.',
+    slug: 'nutrition',
+    icon: 'HeartPulse',
+    iconImageUrl: null,
+    iconImageAlt: 'Nutrition',
+  },
+  {
+    id: 'youth-health',
+    title: 'Youth Education and Safety',
+    description: 'Important information for youth and teens.',
+    slug: 'youth-health',
+    icon: 'Users',
+    iconImageUrl: null,
+    iconImageAlt: 'Youth Health',
+  },
+]
+
 export default async function HomePage() {
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
   const cms = await fetchHomepageGlobal(locale, language)
+  const cmsTopics = await fetchAllTopics(locale, language)
+  const adminActivity = await fetchRecentAdminActivity(8)
 
   const d = {
     badgeText: cms?.badgeText || DEFAULTS.badgeText,
@@ -37,6 +81,26 @@ export default async function HomePage() {
     footerNote: cms?.footerNote || DEFAULTS.footerNote,
     canadianBadgeText: cms?.canadianBadgeText || DEFAULTS.canadianBadgeText,
   }
+
+  const homeTopics =
+    cmsTopics.length > 0
+      ? cmsTopics.map((topic) => {
+          const media =
+            topic.iconImage && typeof topic.iconImage === 'object'
+              ? (topic.iconImage as MediaFromPayload)
+              : null
+
+          return {
+            id: topic.id,
+            title: topic.title,
+            description: topic.description ?? 'Explore this health topic.',
+            slug: topic.slug,
+            icon: topic.icon ?? null,
+            iconImageUrl: media?.url ?? null,
+            iconImageAlt: media?.alt ?? topic.title,
+          }
+        })
+      : TOPIC_FALLBACKS
 
   return (
     <main className="min-h-screen overflow-x-clip bg-white dark:bg-slate-950">
@@ -103,6 +167,45 @@ export default async function HomePage() {
         {/* Canadian badge overlay */}
         <div className="absolute bottom-4 right-4 z-10 hidden items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow backdrop-blur-sm sm:flex dark:bg-slate-900/90 dark:text-slate-300">
           {d.canadianBadgeText}
+        </div>
+      </section>
+
+      <HomeTopicsAndResources locale={locale} topics={homeTopics} />
+
+      <section className="mx-auto mt-6 w-full max-w-[1280px] px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+              Recent CMS Admin Activity
+            </h2>
+            <Link
+              href="/admin"
+              className="text-sm font-medium text-blue-700 hover:text-blue-800 dark:text-blue-400"
+            >
+              Open Admin CMS
+            </Link>
+          </div>
+
+          {adminActivity.length === 0 ? (
+            <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              No admin activity yet.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {adminActivity.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800"
+                >
+                  <p className="text-slate-800 dark:text-slate-100">{item.summary}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {item.entityScope === 'global' ? 'Global' : 'Collection'}: {item.entitySlug} |{' '}
+                    {new Date(item.createdAt).toLocaleString()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
     </main>

@@ -13,7 +13,6 @@ import {
   Syringe,
   type LucideIcon,
 } from 'lucide-react'
-import { slugify } from './_utils/slugify'
 import { getTopicAccent } from './_utils/topicVisuals'
 import { TopicSidebarButtons } from './TopicSidebarButtons'
 import { defaultLocale, type Locale } from '@/i18n/config'
@@ -22,7 +21,7 @@ import { localizePath } from '@/i18n/routing'
 type TopicSection = {
   title: string
   description: string
-  details?: string
+  detailPageSlug: string
   keyPoints: string[]
 }
 
@@ -185,12 +184,18 @@ export function TopicDetailTemplate({
                   <p className="mt-1.5 text-[16px] leading-6 text-slate-600 dark:text-slate-300">
                     {section.description}
                   </p>
-                  <Link
-                    href={localizePath(`/topic/${topicSlug}/${slugify(section.title)}`, locale)}
-                    className={`mt-2 inline-flex text-sm font-semibold ${topicAccent.arrow}`}
-                  >
-                    Learn More <span aria-hidden="true">→</span>
-                  </Link>
+                  {section.detailPageSlug ? (
+                    <Link
+                      href={localizePath(`/${encodeURIComponent(section.detailPageSlug)}`, locale)}
+                      className={`mt-2 inline-flex text-sm font-semibold ${topicAccent.arrow}`}
+                    >
+                      Learn More <span aria-hidden="true">→</span>
+                    </Link>
+                  ) : (
+                    <span className="mt-2 inline-flex text-sm font-semibold text-slate-400 dark:text-slate-500">
+                      Learn More <span aria-hidden="true">→</span>
+                    </span>
+                  )}
                 </div>
 
                 <div className={`rounded-xl border p-3 ${topicAccent.panel} border-transparent`}>

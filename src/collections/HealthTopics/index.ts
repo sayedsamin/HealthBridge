@@ -27,7 +27,8 @@ export const HealthTopics: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'lessonsCount', 'order'],
-    description: 'Manage topic cards shown on the Topics page and their detail page content.',
+    description:
+      'Manage topic cards shown on the Topics page and the linked Pages for each section.',
     group: 'Content',
   },
   fields: [
@@ -185,12 +186,13 @@ export const HealthTopics: CollectionConfig = {
               admin: { description: 'One-to-two sentence description of this section.' },
             },
             {
-              name: 'details',
-              type: 'textarea',
-              localized: true,
+              name: 'detailPage',
+              type: 'relationship',
+              relationTo: 'pages',
+              required: true,
               admin: {
                 description:
-                  'Full detail content shown on the section detail page when users click "Learn More".',
+                  'Create a page in the Pages collection using the standard page template, then link it here.',
               },
             },
             {

@@ -12,7 +12,13 @@ export type TopicSectionFromPayload = {
   id?: string
   title: string
   description: string
-  details?: string
+  detailPage?:
+    | {
+        id: string
+        slug?: string
+      }
+    | string
+    | null
   keyPoints?: Array<{ id?: string; point: string } | string>
 }
 
@@ -208,7 +214,10 @@ export function toTemplateProps(topic: TopicFromPayload, activeSidebarLabel?: st
       topic.sections?.map((s) => ({
         title: s.title,
         description: s.description,
-        details: s.details,
+        detailPageSlug:
+          s.detailPage && typeof s.detailPage === 'object' && s.detailPage.slug
+            ? s.detailPage.slug
+            : '',
         keyPoints: s.keyPoints?.map((k) => (typeof k === 'string' ? k : k.point)) ?? [],
       })) ?? [],
   }

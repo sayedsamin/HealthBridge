@@ -2,6 +2,7 @@ import configPromise from '@payload-config'
 import { defaultLocale, isCmsLocale, type Locale } from '@/i18n/config'
 import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
+import { draftMode } from 'next/headers'
 import { translateContentDeep } from '@/utilities/translateContent'
 import { toKebabCase } from '@/utilities/toKebabCase'
 
@@ -41,7 +42,11 @@ export type TopicFromPayload = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-async function getTopicBySlug(slug: string, locale: Locale): Promise<TopicFromPayload | null> {
+async function getTopicBySlug(
+  slug: string,
+  locale: Locale,
+  includeDrafts: boolean,
+): Promise<TopicFromPayload | null> {
   try {
     const safeDecode = (value: string): string => {
       try {
@@ -68,6 +73,7 @@ async function getTopicBySlug(slug: string, locale: Locale): Promise<TopicFromPa
     const result = await payload.find({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       collection: 'health-topics' as any,
+      draft: includeDrafts,
       locale,
       fallbackLocale: defaultLocale,
       where: { slug: { in: slugCandidates } },
@@ -80,12 +86,13 @@ async function getTopicBySlug(slug: string, locale: Locale): Promise<TopicFromPa
   }
 }
 
-async function getAllTopics(locale: Locale): Promise<TopicFromPayload[]> {
+async function getAllTopics(locale: Locale, includeDrafts: boolean): Promise<TopicFromPayload[]> {
   try {
     const payload = await getPayload({ config: configPromise })
     const result = await payload.find({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       collection: 'health-topics' as any,
+      draft: includeDrafts,
       locale,
       fallbackLocale: defaultLocale,
       sort: 'order',
@@ -102,8 +109,9 @@ async function getTopicBySlugForLanguage(
   slug: string,
   locale: Locale,
   targetLanguage: string,
+  includeDrafts: boolean,
 ): Promise<TopicFromPayload | null> {
-  const topic = await getTopicBySlug(slug, locale)
+  const topic = await getTopicBySlug(slug, locale, includeDrafts)
 
   if (!topic) {
     return null
@@ -119,8 +127,9 @@ async function getTopicBySlugForLanguage(
 async function getAllTopicsForLanguage(
   locale: Locale,
   targetLanguage: string,
+  includeDrafts: boolean,
 ): Promise<TopicFromPayload[]> {
-  const topics = await getAllTopics(locale)
+  const topics = await getAllTopics(locale, includeDrafts)
 
   if (targetLanguage === defaultLocale || isCmsLocale(targetLanguage)) {
     return topics
@@ -131,13 +140,19 @@ async function getAllTopicsForLanguage(
 
 // ─── Cached exports ───────────────────────────────────────────────────────────
 
-export const fetchTopicBySlug = (
+export const fetchTopicBySlug = async (
   slug: string,
   locale: Locale,
   targetLanguage: string = locale,
-): Promise<TopicFromPayload | null> =>
-  unstable_cache(
-    () => getTopicBySlugForLanguage(slug, locale, targetLanguage),
+): Promise<TopicFromPayload | null> => {
+  const { isEnabled } = await draftMode()
+
+  if (isEnabled) {
+    return getTopicBySlugForLanguage(slug, locale, targetLanguage, true)
+  }
+
+  return unstable_cache(
+    () => getTopicBySlugForLanguage(slug, locale, targetLanguage, false),
     [`health-topic-${slug}`, locale, targetLanguage],
     {
       tags: [
@@ -148,18 +163,34 @@ export const fetchTopicBySlug = (
       ],
     },
   )()
+}
 
-export const fetchAllTopics = (
+export const fetchAllTopics = async (
   locale: Locale,
   targetLanguage: string = locale,
-): Promise<TopicFromPayload[]> =>
-  unstable_cache(
-    () => getAllTopicsForLanguage(locale, targetLanguage),
+): Promise<TopicFromPayload[]> => {
+  const { isEnabled } = await draftMode()
+
+  if (isEnabled) {
+    return getAllTopicsForLanguage(locale, targetLanguage, true)
+  }
+
+  return unstable_cache(
+    () => getAllTopicsForLanguage(locale, targetLanguage, false),
     ['health-topics-all', locale, targetLanguage],
     {
       tags: [`health-topics_${locale}`, `health-topics_lang_${targetLanguage}`, 'health-topics'],
     },
   )()
+}
+
+export const fetchAllTopicsUncached = async (
+  locale: Locale,
+  targetLanguage: string = locale,
+): Promise<TopicFromPayload[]> => {
+  const { isEnabled } = await draftMode()
+  return getAllTopicsForLanguage(locale, targetLanguage, isEnabled)
+}
 
 // ─── Converter: Payload → TopicDetailTemplate props ──────────────────────────
 

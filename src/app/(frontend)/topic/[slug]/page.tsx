@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import { TopicDetailTemplate } from '../TopicDetailTemplate'
 import { fetchTopicBySlug, toTemplateProps } from '../_utils/fetchTopicBySlug'
+import { getFallbackTopicBySlug } from '../_utils/staticTopicFallbacks'
 import { defaultLocale } from '@/i18n/config'
-import { localizePath } from '@/i18n/routing'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 
 type Args = {
@@ -34,8 +33,9 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug } = await paramsPromise
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
-  const topic = await fetchTopicBySlug(slug, locale, language)
-  if (!topic) return {}
+  const cmsTopic = await fetchTopicBySlug(slug, locale, language)
+  const topic = cmsTopic || getFallbackTopicBySlug(slug)
+
   return {
     title: topic.title,
     description: topic.subtitle ?? topic.description ?? undefined,
@@ -46,11 +46,8 @@ export default async function DynamicTopicPage({ params: paramsPromise }: Args) 
   const { slug } = await paramsPromise
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
-  const topic = await fetchTopicBySlug(slug, locale, language)
-
-  if (!topic) {
-    redirect(localizePath(`/topic?missingTopic=${encodeURIComponent(slug)}`, locale))
-  }
+  const cmsTopic = await fetchTopicBySlug(slug, locale, language)
+  const topic = cmsTopic || getFallbackTopicBySlug(slug)
 
   return <TopicDetailTemplate {...toTemplateProps(topic)} locale={locale} />
 }

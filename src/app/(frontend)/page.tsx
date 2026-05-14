@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { fetchRecentAdminActivity } from './_utils/fetchAdminActivity'
 import { fetchHomepageGlobal } from './_utils/fetchHomepage'
 import { fetchAllTopics, type MediaFromPayload } from './topic/_utils/fetchTopicBySlug'
 import { HomeTopicsAndResources, type HomeTopic } from './_components/HomeTopicsAndResources'
+import { DEFAULT_POPULAR_RESOURCES } from './_components/PopularResourcesSection'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 
@@ -66,7 +66,6 @@ export default async function HomePage() {
   const language = await getRequestLanguage()
   const cms = await fetchHomepageGlobal(locale, language)
   const cmsTopics = await fetchAllTopics(locale, language)
-  const adminActivity = await fetchRecentAdminActivity(8)
 
   const d = {
     badgeText: cms?.badgeText || DEFAULTS.badgeText,
@@ -80,7 +79,24 @@ export default async function HomePage() {
     secondaryCTAUrl: cms?.secondaryCTAUrl || DEFAULTS.secondaryCTAUrl,
     footerNote: cms?.footerNote || DEFAULTS.footerNote,
     canadianBadgeText: cms?.canadianBadgeText || DEFAULTS.canadianBadgeText,
+    popularResourcesHeading: cms?.popularResourcesHeading || 'Popular Resources',
+    popularResourcesDescription:
+      cms?.popularResourcesDescription ||
+      'Quick links to trusted health resources and support tools.',
+    popularResourcesViewAllLabel: cms?.popularResourcesViewAllLabel || 'View all resources',
+    popularResourcesViewAllUrl: cms?.popularResourcesViewAllUrl || '/posts',
   }
+
+  const popularResources =
+    cms?.popularResources && cms.popularResources.length > 0
+      ? cms.popularResources.map((resource) => ({
+          id: resource.id,
+          title: resource.title,
+          description: resource.description,
+          href: resource.href,
+          icon: resource.icon,
+        }))
+      : DEFAULT_POPULAR_RESOURCES
 
   const homeTopics =
     cmsTopics.length > 0
@@ -170,44 +186,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <HomeTopicsAndResources locale={locale} topics={homeTopics} />
-
-      <section className="mx-auto mt-6 w-full max-w-[1280px] px-4 pb-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Recent CMS Admin Activity
-            </h2>
-            <Link
-              href="/admin"
-              className="text-sm font-medium text-blue-700 hover:text-blue-800 dark:text-blue-400"
-            >
-              Open Admin CMS
-            </Link>
-          </div>
-
-          {adminActivity.length === 0 ? (
-            <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-              No admin activity yet.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {adminActivity.map((item) => (
-                <li
-                  key={item.id}
-                  className="rounded-xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-800"
-                >
-                  <p className="text-slate-800 dark:text-slate-100">{item.summary}</p>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    {item.entityScope === 'global' ? 'Global' : 'Collection'}: {item.entitySlug} |{' '}
-                    {new Date(item.createdAt).toLocaleString()}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
+      <HomeTopicsAndResources
+        locale={locale}
+        topics={homeTopics}
+        popularResources={popularResources}
+        popularResourcesHeading={d.popularResourcesHeading}
+        popularResourcesDescription={d.popularResourcesDescription}
+        popularResourcesViewAllLabel={d.popularResourcesViewAllLabel}
+        popularResourcesViewAllUrl={d.popularResourcesViewAllUrl}
+      />
     </main>
   )
 }

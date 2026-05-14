@@ -18,12 +18,17 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react'
-import { fetchAllTopics, type MediaFromPayload } from './_utils/fetchTopicBySlug'
+import {
+  fetchAllTopics,
+  fetchAllTopicsUncached,
+  type MediaFromPayload,
+} from './_utils/fetchTopicBySlug'
 import { TopicRedirectNotice } from './TopicRedirectNotice'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 import type { Locale } from '@/i18n/config'
 import { getTopicAccent } from './_utils/topicVisuals'
+import { resolveFallbackTopicSlug } from './_utils/staticTopicFallbacks'
 
 // ── Icon map: matches values from the HealthTopics Payload collection ──────────
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -122,7 +127,9 @@ const STATIC_TOPICS = [
 export default async function TopicIndexPage() {
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
-  const cmsTopics = await fetchAllTopics(locale, language)
+  const cachedTopics = await fetchAllTopics(locale, language)
+  const cmsTopics =
+    cachedTopics.length > 0 ? cachedTopics : await fetchAllTopicsUncached(locale, language)
 
   // Use CMS data if available, otherwise fall back to static list
   const topics =
@@ -132,9 +139,12 @@ export default async function TopicIndexPage() {
             t.iconImage && typeof t.iconImage === 'object'
               ? (t.iconImage as MediaFromPayload)
               : null
+
+          const canonicalSlug = resolveFallbackTopicSlug(t.slug)
+
           return {
             id: t.id,
-            slug: t.slug,
+            slug: canonicalSlug,
             label: t.title,
             desc: t.description ?? '',
             lessons: t.lessonsCount ?? 10,
@@ -143,7 +153,12 @@ export default async function TopicIndexPage() {
             iconImageAlt: media?.alt ?? t.title,
           }
         })
-      : STATIC_TOPICS.map((t) => ({ ...t, iconImageUrl: null, iconImageAlt: '' }))
+      : STATIC_TOPICS.map((t) => ({
+          ...t,
+          slug: resolveFallbackTopicSlug(t.slug),
+          iconImageUrl: null,
+          iconImageAlt: '',
+        }))
 
   return (
     <section className="space-y-4">

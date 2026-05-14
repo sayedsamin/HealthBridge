@@ -5,6 +5,7 @@ import { ChevronLeft, CheckCircle2, Info } from 'lucide-react'
 
 import { fetchTopicBySlug } from '../../_utils/fetchTopicBySlug'
 import { slugify } from '../../_utils/slugify'
+import { getFallbackTopicBySlug } from '../../_utils/staticTopicFallbacks'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 import { getTopicAccent } from '../../_utils/topicVisuals'
@@ -24,9 +25,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug, section } = await paramsPromise
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
-  const topic = await fetchTopicBySlug(slug, locale, language)
-
-  if (!topic) return {}
+  const cmsTopic = await fetchTopicBySlug(slug, locale, language)
+  const topic = cmsTopic || getFallbackTopicBySlug(slug)
 
   const targetSection = findSection(topic, section)
   if (!targetSection) return { title: topic.title }
@@ -41,12 +41,11 @@ export default async function TopicSectionPage({ params: paramsPromise }: Args) 
   const { slug, section } = await paramsPromise
   const locale = await getRequestLocale()
   const language = await getRequestLanguage()
-  const topic = await fetchTopicBySlug(slug, locale, language)
+  const cmsTopic = await fetchTopicBySlug(slug, locale, language)
+  const topic = cmsTopic || getFallbackTopicBySlug(slug)
   const topicAccent = getTopicAccent(slug, topic?.icon ?? null)
 
-  if (!topic) notFound()
-
-  const targetSection = findSection(topic, section)
+  const targetSection = findSection(topic, section) || topic.sections?.[0] || null
   if (!targetSection) notFound()
 
   const sectionHighlights = (targetSection.keyPoints ?? [])

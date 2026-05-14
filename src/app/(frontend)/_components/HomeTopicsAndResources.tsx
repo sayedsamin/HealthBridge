@@ -8,15 +8,11 @@ import {
   Brain,
   ChevronRight,
   ClipboardCheck,
-  FileText,
   FlaskConical,
   HeartPulse,
-  HelpingHand,
   Hospital,
   MessageCircleQuestion,
   PhoneCall,
-  Salad,
-  ShieldCheck,
   ShieldPlus,
   Stethoscope,
   Syringe,
@@ -27,6 +23,7 @@ import {
 import { localizePath } from '@/i18n/routing'
 import type { Locale } from '@/i18n/config'
 import { getTopicAccent } from '../topic/_utils/topicVisuals'
+import { PopularResourcesSection, type PopularResourceItem } from './PopularResourcesSection'
 
 export type HomeTopic = {
   id: string
@@ -41,7 +38,51 @@ export type HomeTopic = {
 type Props = {
   locale: Locale
   topics: HomeTopic[]
+  popularResources: PopularResourceItem[]
+  popularResourcesHeading?: string
+  popularResourcesDescription?: string
+  popularResourcesViewAllLabel?: string
+  popularResourcesViewAllUrl?: string
 }
+
+const CLIENT_TOPIC_FALLBACKS: HomeTopic[] = [
+  {
+    id: 'healthcare-system',
+    title: 'Understanding Canadian Healthcare',
+    description: 'Learn how the healthcare system works in Canada.',
+    slug: 'healthcare-system',
+    icon: 'Stethoscope',
+    iconImageUrl: null,
+    iconImageAlt: 'Healthcare',
+  },
+  {
+    id: 'mental-health',
+    title: 'Mental Health Support',
+    description: 'Find resources and tips to support your well-being.',
+    slug: 'mental-health',
+    icon: 'Brain',
+    iconImageUrl: null,
+    iconImageAlt: 'Mental Health',
+  },
+  {
+    id: 'nutrition',
+    title: 'Nutrition and Healthy Living',
+    description: 'Discover healthy choices for you and your family.',
+    slug: 'nutrition',
+    icon: 'HeartPulse',
+    iconImageUrl: null,
+    iconImageAlt: 'Nutrition',
+  },
+  {
+    id: 'youth-health',
+    title: 'Youth Education and Safety',
+    description: 'Important information for youth and teens.',
+    slug: 'youth-health',
+    icon: 'Users',
+    iconImageUrl: null,
+    iconImageAlt: 'Youth Health',
+  },
+]
 
 const TOPIC_ICON_MAP: Record<string, LucideIcon> = {
   Stethoscope,
@@ -58,53 +99,24 @@ const TOPIC_ICON_MAP: Record<string, LucideIcon> = {
   MessageCircleQuestion,
 }
 
-const RESOURCE_LINKS = [
-  {
-    id: 'lab-tests',
-    title: 'Lab Test Explained',
-    description: 'Understand your lab results with simple breakdowns.',
-    href: '/posts',
-    Icon: FlaskConical,
-  },
-  {
-    id: 'nutrition-guides',
-    title: 'Nutrition Tips',
-    description: 'Healthy food choices for individuals and families.',
-    href: '/posts',
-    Icon: Salad,
-  },
-  {
-    id: 'community-support',
-    title: 'Community Support',
-    description: 'Find local services and settlement support resources.',
-    href: '/search',
-    Icon: HelpingHand,
-  },
-  {
-    id: 'forms-and-documents',
-    title: 'Forms and Documents',
-    description: 'Access key forms and healthcare documents quickly.',
-    href: '/search',
-    Icon: FileText,
-  },
-  {
-    id: 'safety-info',
-    title: 'Safety Information',
-    description: 'Learn what to do in urgent and non-urgent situations.',
-    href: '/topic/safety-info',
-    Icon: ShieldCheck,
-  },
-  {
-    id: 'ask-questions',
-    title: 'Ask a Question',
-    description: 'Browse answers to common health and newcomer questions.',
-    href: '/search',
-    Icon: MessageCircleQuestion,
-  },
-]
-
-export function HomeTopicsAndResources({ locale, topics }: Props) {
+export function HomeTopicsAndResources({
+  locale,
+  topics,
+  popularResources,
+  popularResourcesHeading,
+  popularResourcesDescription,
+  popularResourcesViewAllLabel,
+  popularResourcesViewAllUrl,
+}: Props) {
   const [showAllTopics, setShowAllTopics] = useState(false)
+
+  const effectiveTopics = useMemo(() => {
+    const normalizedTopics = (topics || []).filter((topic) => {
+      return Boolean(topic?.id && topic?.title?.trim() && topic?.slug?.trim())
+    })
+
+    return normalizedTopics.length > 0 ? normalizedTopics : CLIENT_TOPIC_FALLBACKS
+  }, [topics])
 
   const getTopicHref = (slug: string) => {
     const normalized = slug.trim().replace(/^\/+|\/+$/g, '')
@@ -117,11 +129,11 @@ export function HomeTopicsAndResources({ locale, topics }: Props) {
   }
 
   const displayTopics = useMemo(
-    () => (showAllTopics ? topics : topics.slice(0, 4)),
-    [showAllTopics, topics],
+    () => (showAllTopics ? effectiveTopics : effectiveTopics.slice(0, 4)),
+    [showAllTopics, effectiveTopics],
   )
 
-  const quickTopics = useMemo(() => topics.slice(0, 6), [topics])
+  const quickTopics = useMemo(() => effectiveTopics.slice(0, 6), [effectiveTopics])
 
   return (
     <section className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 sm:px-6 lg:px-8">
@@ -177,7 +189,7 @@ export function HomeTopicsAndResources({ locale, topics }: Props) {
             Featured topics from your Payload CMS.
           </p>
         </div>
-        {topics.length > 4 ? (
+        {effectiveTopics.length > 4 ? (
           <button
             type="button"
             onClick={() => setShowAllTopics((prev) => !prev)}
@@ -242,45 +254,14 @@ export function HomeTopicsAndResources({ locale, topics }: Props) {
         })}
       </div>
 
-      <div className="mt-8 flex items-end justify-between gap-3">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Popular Resources
-          </h2>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Quick links to trusted health resources and support tools.
-          </p>
-        </div>
-        <Link
-          href={localizePath('/posts', locale)}
-          className="inline-flex items-center gap-1 text-sm font-semibold text-blue-700 transition-colors hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-        >
-          View all resources
-          <ChevronRight className="h-4 w-4" />
-        </Link>
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {RESOURCE_LINKS.map(({ id, title, description, href, Icon }) => (
-          <Link
-            key={id}
-            href={localizePath(href, locale)}
-            className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
-          >
-            <div className="flex items-start gap-3">
-              <div className="rounded-xl bg-blue-50 p-2 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                <Icon className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{title}</h3>
-                <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
-                  {description}
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <PopularResourcesSection
+        locale={locale}
+        heading={popularResourcesHeading}
+        description={popularResourcesDescription}
+        viewAllLabel={popularResourcesViewAllLabel}
+        viewAllUrl={popularResourcesViewAllUrl}
+        resources={popularResources}
+      />
     </section>
   )
 }

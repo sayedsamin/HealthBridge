@@ -29,8 +29,6 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
       {
         title: 'Find Family Doctors',
         description: 'How to register with a family doctor and what documents you may need.',
-        details:
-          'Start with your provincial health portal or local clinic network. Keep your health card and ID ready for registration.',
         keyPoints: [
           { point: 'Use provincial doctor-finder tools.' },
           { point: 'Carry your health card and identification.' },
@@ -40,8 +38,6 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
       {
         title: 'Walk-in Clinics',
         description: 'When to use walk-in clinics and what to expect during your visit.',
-        details:
-          'Walk-in clinics are good for non-emergency issues when your regular doctor is unavailable.',
         keyPoints: [
           { point: 'Bring your health card and medication list.' },
           { point: 'Call ahead for same-day availability.' },
@@ -51,8 +47,6 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
       {
         title: 'Emergency Services',
         description: 'Know when to call 911 or go to the emergency department.',
-        details:
-          'Use emergency services for severe symptoms like chest pain, breathing difficulty, or major injury.',
         keyPoints: [
           { point: 'Call 911 for life-threatening symptoms.' },
           { point: 'Bring medical information if possible.' },
@@ -62,8 +56,6 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
     ],
   },
   {
-    id: 'fallback-mental-health',
-    title: 'Mental Health Support',
     slug: 'mental-health',
     description: 'Find support options and coping tools for emotional well-being.',
     icon: 'Brain',

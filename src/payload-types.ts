@@ -218,7 +218,15 @@ export interface Page {
       | null;
     media?: (string | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  /**
+   * Optional cover/hero image displayed at the top of the page. Recommended size: 1200x600px or wider for desktop display.
+   */
+  heroImage?: (string | null) | Media;
+  /**
+   * Alt text for the hero image (important for accessibility and SEO).
+   */
+  heroAlt?: string | null;
+  layout: (CallToActionBlock | ConceptExplainerBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -503,6 +511,38 @@ export interface CallToActionBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'cta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ConceptExplainerBlock".
+ */
+export interface ConceptExplainerBlock {
+  /**
+   * Short label shown above the title (for example: How It Works).
+   */
+  eyebrow?: string | null;
+  title: string;
+  description?: string | null;
+  /**
+   * Main graphic or infographic for this concept section.
+   */
+  graphic: string | Media;
+  /**
+   * Optional custom alt text for accessibility.
+   */
+  graphicAlt?: string | null;
+  /**
+   * Visual explanation points shown beside the graphic.
+   */
+  points: {
+    icon?: ('Lightbulb' | 'ListChecks' | 'ShieldCheck' | 'Users' | 'HeartPulse' | 'Globe') | null;
+    title: string;
+    description: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'conceptExplainer';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -799,7 +839,7 @@ export interface Form {
   createdAt: string;
 }
 /**
- * Manage topic cards shown on the Topics page and their detail page content.
+ * Manage topic cards shown on the Topics page and the linked Pages for each section.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "health-topics".
@@ -887,9 +927,9 @@ export interface HealthTopic {
          */
         description: string;
         /**
-         * Full detail content shown on the section detail page when users click "Learn More".
+         * Create a page in the Pages collection using the standard page template, then link it here.
          */
-        details?: string | null;
+        detailPage: string | Page;
         /**
          * Bullet points shown in the green "Key Points" panel.
          */
@@ -1279,10 +1319,13 @@ export interface PagesSelect<T extends boolean = true> {
             };
         media?: T;
       };
+  heroImage?: T;
+  heroAlt?: T;
   layout?:
     | T
     | {
         cta?: T | CallToActionBlockSelect<T>;
+        conceptExplainer?: T | ConceptExplainerBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
@@ -1321,6 +1364,27 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               label?: T;
               appearance?: T;
             };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ConceptExplainerBlock_select".
+ */
+export interface ConceptExplainerBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  graphic?: T;
+  graphicAlt?: T;
+  points?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
         id?: T;
       };
   id?: T;
@@ -1581,7 +1645,7 @@ export interface HealthTopicsSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
-        details?: T;
+        detailPage?: T;
         keyPoints?:
           | T
           | {

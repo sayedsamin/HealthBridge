@@ -4,6 +4,7 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
+import { ConceptExplainer } from '../../blocks/ConceptExplainer/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
@@ -72,9 +73,26 @@ export const Pages: CollectionConfig<'pages'> = {
         {
           fields: [
             {
+              name: 'heroImage',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description:
+                  'Optional cover/hero image displayed at the top of the page. Recommended size: 1200x600px or wider for desktop display.',
+              },
+            },
+            {
+              name: 'heroAlt',
+              type: 'text',
+              admin: {
+                description: 'Alt text for the hero image (important for accessibility and SEO).',
+                condition: (_data, siblingData) => Boolean(siblingData?.heroImage),
+              },
+            },
+            {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [CallToAction, ConceptExplainer, Content, MediaBlock, Archive, FormBlock],
               localized: true,
               required: true,
               admin: {

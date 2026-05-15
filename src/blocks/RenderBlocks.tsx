@@ -5,12 +5,14 @@ import type { Locale } from '@/i18n/config'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { ConceptExplainerBlock } from '@/blocks/ConceptExplainer/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
+  conceptExplainer: ConceptExplainerBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
@@ -30,6 +32,20 @@ export const RenderBlocks: React.FC<{
       <Fragment>
         {blocks.map((block, index) => {
           const { blockType } = block
+
+          if (blockType === 'mediaBlock') {
+            return (
+              <div className="my-16" key={index}>
+                <MediaBlock
+                  {...block}
+                  disableInnerContainer
+                  locale={locale}
+                  className="max-w-5xl mx-auto"
+                  imgClassName="w-full max-h-[380px] object-cover"
+                />
+              </div>
+            )
+          }
 
           if (blockType && blockType in blockComponents) {
             const Block = blockComponents[blockType]

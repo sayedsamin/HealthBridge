@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { defaultLexical } from '@/fields/defaultLexical'
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import {
@@ -45,6 +46,65 @@ export const ResourceItems: CollectionConfig = {
       localized: true,
       required: true,
       admin: { description: 'Short description shown on the card.' },
+    },
+    {
+      type: 'collapsible',
+      label: 'Detail Page Content',
+      admin: {
+        initCollapsed: false,
+        description:
+          'Content shown after users click Learn More on this resource card (/resources/[slug]).',
+      },
+      fields: [
+        {
+          name: 'detailIntro',
+          type: 'textarea',
+          localized: true,
+          required: true,
+          admin: {
+            description: 'Short intro paragraph shown near the top of the detail page.',
+          },
+        },
+        {
+          name: 'detailContent',
+          type: 'richText',
+          localized: true,
+          required: true,
+          editor: defaultLexical,
+          admin: {
+            description:
+              'Main educational content for this resource. Add headings, links, and practical guidance.',
+          },
+        },
+        {
+          name: 'helpfulLinks',
+          type: 'array',
+          labels: {
+            singular: 'Helpful link',
+            plural: 'Helpful links',
+          },
+          fields: [
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'href',
+              type: 'text',
+              required: true,
+              admin: {
+                description:
+                  'Use a full URL like https://example.org or an internal path like /topic.',
+              },
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'icon',

@@ -25,7 +25,7 @@ import { defaultLocale, locales } from './i18n/config'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const databaseURL = process.env.REMOTE_DATABASE_URL || process.env.DATABASE_URL
+const databaseURL = process.env.DATABASE_URL || process.env.REMOTE_DATABASE_URL
 
 if (!databaseURL) {
   throw new Error(

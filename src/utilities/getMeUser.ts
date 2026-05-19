@@ -21,11 +21,16 @@ export const getMeUser = async (args?: {
     },
   })
 
-  const {
-    user,
-  }: {
-    user: User
-  } = await meUserReq.json()
+  let user: User | null = null
+
+  if (meUserReq.ok) {
+    try {
+      const data: { user?: User } = await meUserReq.json()
+      user = data?.user || null
+    } catch {
+      user = null
+    }
+  }
 
   if (validUserRedirect && meUserReq.ok && user) {
     redirect(validUserRedirect)
@@ -38,6 +43,6 @@ export const getMeUser = async (args?: {
   // Token will exist here because if it doesn't the user will be redirected
   return {
     token: token!,
-    user,
+    user: user || ({} as User),
   }
 }

@@ -214,7 +214,7 @@ export default async function ResourcesPage() {
           <div className="resources-grid">
             {resources.map((resource) => {
               const Icon = ICON_MAP[resource.icon] ?? Hospital
-              const href = `/resources/${resource.slug}`
+              const href = localizePath(`/resources/${resource.slug}`, locale)
 
               return (
                 <Link key={resource.id} href={href} className="resource-card">

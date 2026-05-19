@@ -1,9 +1,13 @@
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export const revalidateResourceItems: CollectionAfterChangeHook = ({ doc, req: { payload } }) => {
   payload.logger.info(`Revalidating resource items after change: ${doc.slug}`)
   revalidateTag('resource-items')
+  revalidatePath('/resources')
+  if (typeof doc.slug === 'string' && doc.slug.length > 0) {
+    revalidatePath(`/resources/${doc.slug}`)
+  }
   return doc
 }
 
@@ -13,5 +17,9 @@ export const revalidateResourceItemsOnDelete: CollectionAfterDeleteHook = ({
 }) => {
   payload.logger.info(`Revalidating resource items after delete: ${doc.slug}`)
   revalidateTag('resource-items')
+  revalidatePath('/resources')
+  if (typeof doc.slug === 'string' && doc.slug.length > 0) {
+    revalidatePath(`/resources/${doc.slug}`)
+  }
   return doc
 }

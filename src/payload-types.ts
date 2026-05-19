@@ -966,6 +966,39 @@ export interface ResourceItem {
    */
   description: string;
   /**
+   * Short intro paragraph shown near the top of the detail page.
+   */
+  detailIntro: string;
+  /**
+   * Main educational content for this resource. Add headings, links, and practical guidance.
+   */
+  detailContent: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  helpfulLinks?:
+    | {
+        label: string;
+        /**
+         * Use a full URL like https://example.org or an internal path like /topic.
+         */
+        href: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Icon displayed on the resource card.
    */
   icon:
@@ -1665,6 +1698,16 @@ export interface ResourceItemsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   description?: T;
+  detailIntro?: T;
+  detailContent?: T;
+  helpfulLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        description?: T;
+        id?: T;
+      };
   icon?: T;
   order?: T;
   updatedAt?: T;

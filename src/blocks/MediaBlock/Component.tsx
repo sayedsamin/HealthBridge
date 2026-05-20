@@ -26,6 +26,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
     imgClassName,
     media,
     staticImage,
+    writeUp,
     disableInnerContainer,
   } = props
 
@@ -60,6 +61,15 @@ export const MediaBlock: React.FC<Props> = (props) => {
           )}
         >
           <RichText data={caption} enableGutter={false} />
+        </div>
+      )}
+      {writeUp && (
+        <div
+          className={cn('mt-6', {
+            container: !disableInnerContainer,
+          })}
+        >
+          <RichText data={writeUp} enableGutter={false} />
         </div>
       )}
     </div>

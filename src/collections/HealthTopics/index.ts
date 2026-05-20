@@ -155,6 +155,30 @@ export const HealthTopics: CollectionConfig = {
           admin: { description: 'Duration shown next to the "Watch Overview Video" badge.' },
         },
         {
+          name: 'videoUrl',
+          type: 'text',
+          admin: {
+            description: 'Optional YouTube video link used by the Watch Overview Video badge.',
+          },
+        },
+        {
+          name: 'guideUrl',
+          type: 'text',
+          admin: {
+            description:
+              'URL or uploaded-file path for the "Download Guide (PDF)" button. Paste a direct PDF link or upload a file to Media and paste its URL here.',
+          },
+        },
+        {
+          name: 'guideLabel',
+          type: 'text',
+          localized: true,
+          admin: {
+            description:
+              'Optional label for the guide button (defaults to "Download Guide (PDF)").',
+          },
+        },
+        {
           name: 'supportPhone',
           type: 'text',
           defaultValue: '1-888-315-9257',

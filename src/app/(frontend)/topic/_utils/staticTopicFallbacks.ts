@@ -24,6 +24,9 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
       { item: 'Emergency Services' },
     ],
     videoDuration: '3 min',
+    videoUrl: '',
+    guideUrl: '',
+    guideLabel: '',
     supportPhone: '1-888-315-9257',
     sections: [
       {
@@ -64,6 +67,9 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
     sidebarTitle: 'Topics Overview',
     sidebarItems: [{ item: 'Recognize Signs' }, { item: 'Get Help' }, { item: 'Build Habits' }],
     videoDuration: '3 min',
+    videoUrl: '',
+    guideUrl: '',
+    guideLabel: '',
     supportPhone: '1-888-315-9257',
     sections: [
       {
@@ -97,6 +103,9 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
     sidebarTitle: 'Topics Overview',
     sidebarItems: [{ item: 'Meal Planning' }, { item: 'Healthy Habits' }],
     videoDuration: '3 min',
+    videoUrl: '',
+    guideUrl: '',
+    guideLabel: '',
     supportPhone: '1-888-315-9257',
     sections: [
       {
@@ -121,6 +130,9 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
     sidebarTitle: 'Topics Overview',
     sidebarItems: [{ item: 'School Health' }, { item: 'Safety Basics' }],
     videoDuration: '3 min',
+    videoUrl: '',
+    guideUrl: '',
+    guideLabel: '',
     supportPhone: '1-888-315-9257',
     sections: [
       {
@@ -148,6 +160,9 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
       { item: 'Community Safety' },
     ],
     videoDuration: '3 min',
+    videoUrl: '',
+    guideUrl: '',
+    guideLabel: '',
     supportPhone: '1-888-315-9257',
     sections: [
       {
@@ -181,6 +196,9 @@ export const STATIC_TOPIC_FALLBACKS: TopicFromPayload[] = [
     sidebarTitle: 'Topics Overview',
     sidebarItems: [{ item: 'Insurance Basics' }, { item: 'Settlement Services' }],
     videoDuration: '3 min',
+    videoUrl: '',
+    guideUrl: '',
+    guideLabel: '',
     supportPhone: '1-888-315-9257',
     sections: [
       {

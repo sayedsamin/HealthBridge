@@ -42,6 +42,9 @@ export type TopicFromPayload = {
   sidebarTitle?: string
   sidebarItems?: Array<{ id?: string; item: string }>
   videoDuration?: string
+  videoUrl?: string
+  guideUrl?: string
+  guideLabel?: string
   supportPhone?: string
   sections?: TopicSectionFromPayload[]
 }
@@ -209,6 +212,9 @@ export function toTemplateProps(topic: TopicFromPayload, activeSidebarLabel?: st
     activeSidebarLabel: activeSidebarLabel ?? topic.sidebarItems?.[0]?.item ?? topic.title,
     sidebarItems: topic.sidebarItems?.map((s) => s.item) ?? [],
     videoDuration: topic.videoDuration ?? '3 min',
+    videoUrl: topic.videoUrl ?? '',
+    guideUrl: topic.guideUrl ?? '',
+    guideLabel: topic.guideLabel ?? '',
     supportPhone: topic.supportPhone ?? '1-888-315-9257',
     sections:
       topic.sections?.map((s) => ({

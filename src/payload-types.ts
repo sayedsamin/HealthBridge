@@ -205,6 +205,10 @@ export interface Page {
               | ({
                   relationTo: 'posts';
                   value: string | Post;
+                } | null)
+              | ({
+                  relationTo: 'health-topics';
+                  value: string | HealthTopic;
                 } | null);
             url?: string | null;
             label: string;
@@ -465,6 +469,125 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Manage topic cards shown on the Topics page and the linked Pages for each section.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "health-topics".
+ */
+export interface HealthTopic {
+  id: string;
+  /**
+   * Card title shown on the Topics overview page.
+   */
+  title: string;
+  /**
+   * URL path segment — must be lowercase with hyphens, e.g. "healthcare-system" → /topic/healthcare-system.
+   */
+  slug: string;
+  /**
+   * Short description shown below the card title.
+   */
+  description?: string | null;
+  /**
+   * Icon displayed on the topic card. If an image is uploaded below, the image takes priority over this selection.
+   */
+  icon?:
+    | (
+        | 'Stethoscope'
+        | 'FlaskConical'
+        | 'HeartPulse'
+        | 'Brain'
+        | 'Users'
+        | 'ShieldPlus'
+        | 'Syringe'
+        | 'ClipboardCheck'
+        | 'BadgePlus'
+        | 'Hospital'
+        | 'PhoneCall'
+      )
+    | null;
+  /**
+   * Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: at least 256x256 px (square).
+   */
+  iconImage?: (string | null) | Media;
+  /**
+   * Number of lessons to display on the card badge.
+   */
+  lessonsCount?: number | null;
+  /**
+   * Sort order on the overview page. Lower numbers appear first.
+   */
+  order?: number | null;
+  /**
+   * Subtitle / description shown below the page heading.
+   */
+  subtitle?: string | null;
+  /**
+   * Heading text in the left sidebar box.
+   */
+  sidebarTitle?: string | null;
+  /**
+   * Navigation items shown in the sidebar (e.g. sub-topic names).
+   */
+  sidebarItems?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Duration shown next to the "Watch Overview Video" badge.
+   */
+  videoDuration?: string | null;
+  /**
+   * Optional YouTube video link used by the Watch Overview Video badge.
+   */
+  videoUrl?: string | null;
+  /**
+   * URL or uploaded-file path for the "Download Guide (PDF)" button. Paste a direct PDF link or upload a file to Media and paste its URL here.
+   */
+  guideUrl?: string | null;
+  /**
+   * Optional label for the guide button (defaults to "Download Guide (PDF)").
+   */
+  guideLabel?: string | null;
+  /**
+   * Support phone number displayed in the bottom help strip.
+   */
+  supportPhone?: string | null;
+  /**
+   * Content sections displayed as cards on the detail page.
+   */
+  sections?:
+    | {
+        /**
+         * Section heading (e.g. "Family Doctors").
+         */
+        title: string;
+        /**
+         * One-to-two sentence description of this section.
+         */
+        description: string;
+        /**
+         * Create a page in the Pages collection using the standard page template, then link it here.
+         */
+        detailPage: string | Page;
+        /**
+         * Bullet points shown in the green "Key Points" panel.
+         */
+        keyPoints?:
+          | {
+              point: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CallToActionBlock".
  */
@@ -497,6 +620,10 @@ export interface CallToActionBlock {
             | ({
                 relationTo: 'posts';
                 value: string | Post;
+              } | null)
+            | ({
+                relationTo: 'health-topics';
+                value: string | HealthTopic;
               } | null);
           url?: string | null;
           label: string;
@@ -579,6 +706,10 @@ export interface ContentBlock {
             | ({
                 relationTo: 'posts';
                 value: string | Post;
+              } | null)
+            | ({
+                relationTo: 'health-topics';
+                value: string | HealthTopic;
               } | null);
           url?: string | null;
           label: string;
@@ -599,7 +730,22 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
-  media: string | Media;
+  media?: (string | null) | Media;
+  writeUp?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -832,113 +978,6 @@ export interface Form {
           };
           [k: string]: unknown;
         } | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Manage topic cards shown on the Topics page and the linked Pages for each section.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "health-topics".
- */
-export interface HealthTopic {
-  id: string;
-  /**
-   * Card title shown on the Topics overview page.
-   */
-  title: string;
-  /**
-   * URL path segment — must be lowercase with hyphens, e.g. "healthcare-system" → /topic/healthcare-system.
-   */
-  slug: string;
-  /**
-   * Short description shown below the card title.
-   */
-  description?: string | null;
-  /**
-   * Icon displayed on the topic card. If an image is uploaded below, the image takes priority over this selection.
-   */
-  icon?:
-    | (
-        | 'Stethoscope'
-        | 'FlaskConical'
-        | 'HeartPulse'
-        | 'Brain'
-        | 'Users'
-        | 'ShieldPlus'
-        | 'Syringe'
-        | 'ClipboardCheck'
-        | 'BadgePlus'
-        | 'Hospital'
-        | 'PhoneCall'
-      )
-    | null;
-  /**
-   * Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: at least 256x256 px (square).
-   */
-  iconImage?: (string | null) | Media;
-  /**
-   * Number of lessons to display on the card badge.
-   */
-  lessonsCount?: number | null;
-  /**
-   * Sort order on the overview page. Lower numbers appear first.
-   */
-  order?: number | null;
-  /**
-   * Subtitle / description shown below the page heading.
-   */
-  subtitle?: string | null;
-  /**
-   * Heading text in the left sidebar box.
-   */
-  sidebarTitle?: string | null;
-  /**
-   * Navigation items shown in the sidebar (e.g. sub-topic names).
-   */
-  sidebarItems?:
-    | {
-        item: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Duration shown next to the "Watch Overview Video" badge.
-   */
-  videoDuration?: string | null;
-  /**
-   * Support phone number displayed in the bottom help strip.
-   */
-  supportPhone?: string | null;
-  /**
-   * Content sections displayed as cards on the detail page.
-   */
-  sections?:
-    | {
-        /**
-         * Section heading (e.g. "Family Doctors").
-         */
-        title: string;
-        /**
-         * One-to-two sentence description of this section.
-         */
-        description: string;
-        /**
-         * Create a page in the Pages collection using the standard page template, then link it here.
-         */
-        detailPage: string | Page;
-        /**
-         * Bullet points shown in the green "Key Points" panel.
-         */
-        keyPoints?:
-          | {
-              point: string;
-              id?: string | null;
-            }[]
-          | null;
         id?: string | null;
       }[]
     | null;
@@ -1455,6 +1494,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  */
 export interface MediaBlockSelect<T extends boolean = true> {
   media?: T;
+  writeUp?: T;
   id?: T;
   blockName?: T;
 }
@@ -1672,6 +1712,9 @@ export interface HealthTopicsSelect<T extends boolean = true> {
         id?: T;
       };
   videoDuration?: T;
+  videoUrl?: T;
+  guideUrl?: T;
+  guideLabel?: T;
   supportPhone?: T;
   sections?:
     | T
@@ -2024,6 +2067,10 @@ export interface Header {
             | ({
                 relationTo: 'posts';
                 value: string | Post;
+              } | null)
+            | ({
+                relationTo: 'health-topics';
+                value: string | HealthTopic;
               } | null);
           url?: string | null;
           label: string;
@@ -2053,6 +2100,10 @@ export interface Footer {
             | ({
                 relationTo: 'posts';
                 value: string | Post;
+              } | null)
+            | ({
+                relationTo: 'health-topics';
+                value: string | HealthTopic;
               } | null);
           url?: string | null;
           label: string;

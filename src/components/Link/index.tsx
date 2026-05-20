@@ -5,7 +5,7 @@ import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Page, Post } from '@/payload-types'
+import type { HealthTopic, Page, Post } from '@/payload-types'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']
@@ -15,8 +15,8 @@ type CMSLinkType = {
   locale?: Locale
   newTab?: boolean | null
   reference?: {
-    relationTo: 'pages' | 'posts'
-    value: Page | Post | string | number
+    relationTo: 'pages' | 'posts' | 'health-topics'
+    value: Page | Post | HealthTopic | string | number
   } | null
   size?: ButtonProps['size'] | null
   type?: 'custom' | 'reference' | null
@@ -37,9 +37,15 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     url,
   } = props
 
+  const relationToPathMap: Record<string, string> = {
+    pages: '',
+    posts: '/posts',
+    'health-topics': '/topic',
+  }
+
   const href =
     type === 'reference' && typeof reference?.value === 'object' && reference.value.slug
-      ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
+      ? `${relationToPathMap[reference.relationTo] ?? `/${reference.relationTo}`}/${
           reference.value.slug
         }`
       : url

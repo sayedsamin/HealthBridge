@@ -18,6 +18,17 @@ import { TopicSidebarButtons } from './TopicSidebarButtons'
 import { defaultLocale, type Locale } from '@/i18n/config'
 import { localizePath } from '@/i18n/routing'
 
+const PlayBadgeIcon = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 16 16"
+    className="h-3.5 w-3.5 fill-current"
+    focusable="false"
+  >
+    <path d="M4.75 3.75v8.5a.75.75 0 0 0 1.14.64l6.5-4.25a.75.75 0 0 0 0-1.28l-6.5-4.25a.75.75 0 0 0-1.14.64Z" />
+  </svg>
+)
+
 type TopicSection = {
   title: string
   description: string
@@ -35,6 +46,9 @@ type TopicDetailTemplateProps = {
   sections: TopicSection[]
   locale?: Locale
   videoDuration?: string
+  videoUrl?: string
+  guideUrl?: string
+  guideLabel?: string
   supportPhone?: string
 }
 
@@ -74,6 +88,9 @@ export function TopicDetailTemplate({
   sections,
   locale = defaultLocale,
   videoDuration = '3 min',
+  videoUrl,
+  guideUrl,
+  guideLabel,
   supportPhone = '1-888-315-9257',
 }: TopicDetailTemplateProps) {
   const topicAccent = getTopicAccent(topicSlug)
@@ -122,14 +139,58 @@ export function TopicDetailTemplate({
           </button>
         </div>
 
-        <div className={`rounded-2xl border p-4 ${topicAccent.panel} border-transparent`}>
-          <h3 className={`text-sm font-semibold ${topicAccent.arrow} dark:text-white`}>
-            Download Guide (PDF)
-          </h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
-            Step-by-step guide to using healthcare in Canada.
-          </p>
-        </div>
+        {guideUrl ? (
+          <a
+            href={guideUrl}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`block rounded-2xl border p-4 transition-opacity hover:opacity-90 ${topicAccent.panel} border-transparent`}
+          >
+            <h3
+              className={`flex items-center gap-1.5 text-sm font-semibold ${topicAccent.arrow} dark:text-white`}
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                className="h-3.5 w-3.5 fill-current shrink-0"
+                focusable="false"
+              >
+                <path d="M7.25 1a.75.75 0 0 1 1.5 0v6.44l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72V1ZM2.5 13.25a.75.75 0 0 1 .75-.75h9.5a.75.75 0 0 1 0 1.5h-9.5a.75.75 0 0 1-.75-.75Z" />
+              </svg>
+              {guideLabel || 'Download Guide'}
+              <span className="ml-auto rounded bg-white/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:bg-white/10 dark:text-slate-400">
+                PDF
+              </span>
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
+              Step-by-step guide to using healthcare in Canada.
+            </p>
+          </a>
+        ) : (
+          <div className={`rounded-2xl border p-4 ${topicAccent.panel} border-transparent`}>
+            <h3
+              className={`flex items-center gap-1.5 text-sm font-semibold ${topicAccent.arrow} dark:text-white`}
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                className="h-3.5 w-3.5 fill-current shrink-0"
+                focusable="false"
+              >
+                <path d="M7.25 1a.75.75 0 0 1 1.5 0v6.44l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 1 1 1.06-1.06l1.72 1.72V1ZM2.5 13.25a.75.75 0 0 1 .75-.75h9.5a.75.75 0 0 1 0 1.5h-9.5a.75.75 0 0 1-.75-.75Z" />
+              </svg>
+              Download Guide
+              <span className="ml-auto rounded bg-white/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:bg-white/10 dark:text-slate-400">
+                PDF
+              </span>
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
+              Step-by-step guide to using healthcare in Canada.
+            </p>
+            <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">Coming soon</p>
+          </div>
+        )}
       </aside>
 
       <section>
@@ -144,17 +205,34 @@ export function TopicDetailTemplate({
               {subtitle}
             </p>
           </div>
-          <div
-            className={`rounded-2xl border px-5 py-4 text-sm font-semibold ${topicAccent.panel} border-transparent`}
-          >
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Watch Overview Video
+          {videoUrl ? (
+            <Link
+              href={videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`rounded-2xl border px-5 py-4 text-sm font-semibold transition-opacity hover:opacity-90 ${topicAccent.panel} border-transparent`}
+            >
+              <div className="flex items-center gap-2">
+                <PlayBadgeIcon />
+                Watch Overview Video
+              </div>
+              <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
+                {videoDuration}
+              </div>
+            </Link>
+          ) : (
+            <div
+              className={`rounded-2xl border px-5 py-4 text-sm font-semibold ${topicAccent.panel} border-transparent`}
+            >
+              <div className="flex items-center gap-2">
+                <PlayBadgeIcon />
+                Watch Overview Video
+              </div>
+              <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
+                {videoDuration}
+              </div>
             </div>
-            <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
-              {videoDuration}
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="space-y-2.5">

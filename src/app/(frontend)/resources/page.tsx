@@ -164,23 +164,10 @@ export default async function ResourcesPage() {
 
               <div className="resources-actions">
                 <Link
-                  href={localizePath(
-                    globalData.heroPrimaryHref || STATIC_RESOURCES_FALLBACK.heroPrimaryHref,
-                    locale,
-                  )}
+                  href={localizePath('/topic', locale)}
                   className="resources-button resources-button--solid"
                 >
                   {globalData.heroPrimaryLabel || STATIC_RESOURCES_FALLBACK.heroPrimaryLabel}
-                </Link>
-
-                <Link
-                  href={localizePath(
-                    globalData.heroSecondaryHref || STATIC_RESOURCES_FALLBACK.heroSecondaryHref,
-                    locale,
-                  )}
-                  className="resources-button resources-button--ghost"
-                >
-                  {globalData.heroSecondaryLabel || STATIC_RESOURCES_FALLBACK.heroSecondaryLabel}
                 </Link>
               </div>
             </div>

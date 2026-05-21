@@ -142,7 +142,7 @@ export function HomeTopicsAndResources({
           Quick Access
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {quickTopics.map((topic) => {
+          {quickTopics.map((topic, index) => {
             const topicAccent = getTopicAccent(topic.slug, topic.icon)
             const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
 
@@ -150,7 +150,8 @@ export function HomeTopicsAndResources({
               <Link
                 key={`quick-${topic.id}`}
                 href={getTopicHref(topic.slug)}
-                className={`group inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 ${topicAccent.card}`}
+                className={`group animate-fadeInScale inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 ${topicAccent.card}`}
+                style={{ animationDelay: `${index * 0.08}s` }}
               >
                 <span
                   className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
@@ -204,7 +205,7 @@ export function HomeTopicsAndResources({
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {displayTopics.map((topic) => {
+        {displayTopics.map((topic, index) => {
           const topicAccent = getTopicAccent(topic.slug, topic.icon)
           const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
 
@@ -212,7 +213,8 @@ export function HomeTopicsAndResources({
             <Link
               key={topic.id}
               href={getTopicHref(topic.slug)}
-              className={`group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 ${topicAccent.card}`}
+              className={`group animate-fadeInScale rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 ${topicAccent.card}`}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div
                 className={`mb-4 flex h-24 items-center rounded-xl bg-gradient-to-br px-4 ${topicAccent.panel}`}

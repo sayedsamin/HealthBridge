@@ -77,6 +77,15 @@ export const ResourceItems: CollectionConfig = {
           },
         },
         {
+          name: 'heroImage',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Optional image displayed to the right of the hero section on the detail page.',
+          },
+        },
+        {
           name: 'helpfulLinks',
           type: 'array',
           labels: {

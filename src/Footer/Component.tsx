@@ -14,8 +14,7 @@ export async function Footer() {
   const footerData = await getCachedGlobal('footer', 1, locale, language)()
 
   const navItems = footerData?.navItems || []
-  const primaryLinks = navItems.slice(0, 3)
-  const secondaryLinks = navItems.slice(3, 6)
+  const additionalLinks = navItems.slice(0, 6)
   const year = new Date().getFullYear()
 
   return (
@@ -41,37 +40,53 @@ export async function Footer() {
                 Quick Links
               </h3>
               <nav className="flex flex-col gap-2">
-                {primaryLinks.map(({ link }, i) => {
-                  return (
-                    <CMSLink
-                      className="text-sm text-slate-300 transition-colors hover:text-white"
-                      key={`primary-${i}`}
-                      locale={locale}
-                      {...link}
-                    />
-                  )
-                })}
+                <Link
+                  href={localizePath('/', locale)}
+                  className="text-sm text-slate-300 transition-colors hover:text-white"
+                >
+                  Home
+                </Link>
+                <Link
+                  href={localizePath('/topic', locale)}
+                  className="text-sm text-slate-300 transition-colors hover:text-white"
+                >
+                  Topics
+                </Link>
+                <Link
+                  href={localizePath('/resources', locale)}
+                  className="text-sm text-slate-300 transition-colors hover:text-white"
+                >
+                  Resources
+                </Link>
+                <Link
+                  href={localizePath('/about-us', locale)}
+                  className="text-sm text-slate-300 transition-colors hover:text-white"
+                >
+                  About Us
+                </Link>
               </nav>
             </div>
 
             <div>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-200">
-                Resources
+                <Link
+                  href={localizePath('/resources', locale)}
+                  className="transition-colors hover:text-white"
+                >
+                  Resources
+                </Link>
               </h3>
               <nav className="flex flex-col gap-2">
-                {secondaryLinks.map(({ link }, i) => {
+                {additionalLinks.map(({ link }, i) => {
                   return (
                     <CMSLink
                       className="text-sm text-slate-300 transition-colors hover:text-white"
-                      key={`secondary-${i}`}
+                      key={`additional-${i}`}
                       locale={locale}
                       {...link}
                     />
                   )
                 })}
-                {secondaryLinks.length === 0 ? (
-                  <span className="text-sm text-slate-500">Add footer links in Payload CMS.</span>
-                ) : null}
               </nav>
             </div>
           </div>

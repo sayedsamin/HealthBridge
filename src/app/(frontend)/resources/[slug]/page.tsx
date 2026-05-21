@@ -22,6 +22,7 @@ import RichText from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
+import Image from 'next/image'
 import { defaultLocale, type Locale } from '@/i18n/config'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
@@ -47,6 +48,7 @@ type ResourceDetail = {
   description: string
   detailIntro?: string
   detailContent?: unknown
+  heroImage?: { url?: string; alt?: string } | null
   helpfulLinks?: HelpfulLink[] | null
   icon?: string
 }
@@ -149,7 +151,25 @@ export default async function ResourceDetailPage({ params: paramsPromise }: Args
             <h1 className="resource-detail-title">{resource.title}</h1>
           </div>
 
-          <p className="resource-detail-intro">{resource.detailIntro || resource.description}</p>
+          <div className="grid gap-8 md:grid-cols-2 md:items-center">
+            <div>
+              <p className="resource-detail-intro">
+                {resource.detailIntro || resource.description}
+              </p>
+            </div>
+            {resource.heroImage && resource.heroImage.url && (
+              <div className="flex justify-center">
+                <Image
+                  src={resource.heroImage.url}
+                  alt={resource.heroImage.alt || resource.title}
+                  width={400}
+                  height={300}
+                  className="rounded-lg object-cover"
+                  priority
+                />
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -242,6 +262,20 @@ const queryResourceBySlug = cache(
 
     const translated = await translateContentDeep(resource, targetLanguage)
 
+    const heroImageData = translated.heroImage
+    const heroImage = heroImageData
+      ? {
+          url:
+            typeof heroImageData === 'object' && heroImageData !== null && 'url' in heroImageData
+              ? (heroImageData.url as string | undefined)
+              : undefined,
+          alt:
+            typeof heroImageData === 'object' && heroImageData !== null && 'alt' in heroImageData
+              ? (heroImageData.alt as string | undefined)
+              : undefined,
+        }
+      : null
+
     return {
       id: String(translated.id),
       title: typeof translated.title === 'string' ? translated.title : '',
@@ -249,6 +283,7 @@ const queryResourceBySlug = cache(
       description: typeof translated.description === 'string' ? translated.description : '',
       detailIntro: typeof translated.detailIntro === 'string' ? translated.detailIntro : undefined,
       detailContent: translated.detailContent,
+      heroImage: heroImage ? heroImage : undefined,
       helpfulLinks: Array.isArray(translated.helpfulLinks)
         ? translated.helpfulLinks.map((link) => ({
             id: typeof link?.id === 'string' ? link.id : null,

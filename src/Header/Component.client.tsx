@@ -8,7 +8,21 @@ import React, { useEffect, useState } from 'react'
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
 
-export const HeaderClient: React.FC = () => {
+type HeaderClientProps = {
+  topicMenuItems: Array<{
+    slug: string
+    label: string
+  }>
+  resourceMenuItems: Array<{
+    slug: string
+    label: string
+  }>
+}
+
+export const HeaderClient: React.FC<HeaderClientProps> = ({
+  topicMenuItems,
+  resourceMenuItems,
+}) => {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
@@ -34,7 +48,7 @@ export const HeaderClient: React.FC = () => {
         <Link href={localizePath('/', locale)}>
           <Logo loading="eager" priority="high" />
         </Link>
-        <HeaderNav />
+        <HeaderNav topicMenuItems={topicMenuItems} resourceMenuItems={resourceMenuItems} />
       </div>
     </header>
   )

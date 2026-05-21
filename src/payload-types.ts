@@ -1026,6 +1026,10 @@ export interface ResourceItem {
     };
     [k: string]: unknown;
   };
+  /**
+   * Optional image displayed to the right of the hero section on the detail page.
+   */
+  heroImage?: (string | null) | Media;
   helpfulLinks?:
     | {
         label: string;
@@ -1743,6 +1747,7 @@ export interface ResourceItemsSelect<T extends boolean = true> {
   description?: T;
   detailIntro?: T;
   detailContent?: T;
+  heroImage?: T;
   helpfulLinks?:
     | T
     | {

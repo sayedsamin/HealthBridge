@@ -242,7 +242,7 @@
     display: block;
     border-radius: 1.5rem;
     border: 1px solid var(--border);
-    background: var(--card);
+    background: color-mix(in oklab, #93c5fd 44%, var(--card));
     padding: 1.5rem;
     color: var(--card-foreground);
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -254,9 +254,10 @@
   }
 
   .resource-card:hover {
-    transform: translateY(-0.25rem);
-    border-color: color-mix(in oklab, var(--primary) 18%, var(--border));
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    transform: translateY(-0.15rem);
+    border-color: color-mix(in oklab, var(--foreground) 16%, var(--border));
+    background: color-mix(in oklab, #60a5fa 52%, var(--card));
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
   }
 
   .resource-card-icon {
@@ -266,16 +267,19 @@
     align-items: center;
     justify-content: center;
     border-radius: 1rem;
-    background: color-mix(in oklab, var(--primary) 10%, var(--background));
-    color: color-mix(in oklab, var(--primary) 68%, #2563eb);
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--card) 88%, var(--background));
+    color: color-mix(in oklab, var(--foreground) 84%, #334155);
     transition:
       background-color 0.2s ease,
-      color 0.2s ease;
+      color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .resource-card:hover .resource-card-icon {
-    background: color-mix(in oklab, #2563eb 88%, var(--background));
-    color: white;
+    border-color: color-mix(in oklab, var(--foreground) 16%, var(--border));
+    background: color-mix(in oklab, var(--card) 82%, var(--background));
+    color: color-mix(in oklab, var(--foreground) 90%, #1e293b);
   }
 
   .resource-card-title {
@@ -292,13 +296,27 @@
     color: var(--muted-foreground);
   }
 
+  [data-theme='dark'] .resource-card {
+    border-color: var(--border);
+    background: var(--card);
+    box-shadow: 0 1px 2px rgba(2, 6, 23, 0.45);
+  }
+
+  [data-theme='dark'] .resource-card-title {
+    color: var(--foreground);
+  }
+
+  [data-theme='dark'] .resource-card-description {
+    color: var(--muted-foreground);
+  }
+
   .resource-card-link {
     margin-top: 1.5rem;
     display: inline-flex;
     align-items: center;
     font-size: 0.875rem;
     font-weight: 700;
-    color: color-mix(in oklab, #2563eb 88%, var(--foreground));
+    color: color-mix(in oklab, var(--foreground) 82%, var(--primary));
   }
 
   .resources-emergency {
@@ -520,7 +538,22 @@
 
   .resource-detail-page {
     min-height: 100vh;
-    background: var(--background);
+    background:
+      radial-gradient(
+        circle at top left,
+        color-mix(in oklab, var(--primary) 10%, transparent),
+        transparent 28%
+      ),
+      radial-gradient(
+        circle at top right,
+        color-mix(in oklab, var(--secondary) 12%, transparent),
+        transparent 24%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 96%, var(--primary) 4%),
+        var(--background)
+      );
     color: var(--foreground);
   }
 
@@ -528,15 +561,44 @@
     border-bottom: 1px solid var(--border);
     background:
       radial-gradient(
-        circle at 0% 0%,
-        color-mix(in oklab, var(--primary) 15%, transparent),
-        transparent 35%
+        circle at 4% 0%,
+        color-mix(in oklab, #38bdf8 22%, transparent),
+        transparent 38%
+      ),
+      radial-gradient(
+        circle at 98% 8%,
+        color-mix(in oklab, #22d3ee 16%, transparent),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 50% -20%,
+        color-mix(in oklab, #60a5fa 12%, transparent),
+        transparent 42%
       ),
       linear-gradient(
         180deg,
-        color-mix(in oklab, var(--background) 92%, var(--primary) 8%),
+        color-mix(in oklab, var(--background) 84%, #dbeafe 16%),
+        color-mix(in oklab, var(--background) 92%, #e0f2fe 8%) 58%,
         var(--background)
       );
+  }
+
+  .resource-detail-hero .resources-container--section {
+    padding-block: 3.5rem;
+  }
+
+  @variant lg {
+    .resource-detail-hero .resources-container--section {
+      padding-block: 4.75rem;
+    }
+  }
+
+  [data-theme='dark'] .resource-detail-hero {
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 82%, #0f172a);
+    background:
+      radial-gradient(circle at 8% 0%, rgba(56, 189, 248, 0.2), transparent 40%),
+      radial-gradient(circle at 96% 4%, rgba(34, 211, 238, 0.16), transparent 34%),
+      linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.98));
   }
 
   .resource-detail-breadcrumbs {
@@ -574,8 +636,13 @@
     align-items: center;
     justify-content: center;
     border-radius: 0.9rem;
-    background: color-mix(in oklab, var(--primary) 12%, var(--background));
-    color: color-mix(in oklab, var(--primary) 72%, var(--foreground));
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--primary) 22%, var(--background)),
+      color-mix(in oklab, var(--secondary) 12%, var(--background))
+    );
+    color: color-mix(in oklab, var(--primary) 82%, var(--foreground));
+    box-shadow: 0 10px 30px color-mix(in oklab, var(--primary) 14%, transparent);
   }
 
   .resource-detail-title {
@@ -593,6 +660,32 @@
     color: var(--muted-foreground);
   }
 
+  .resource-detail-hero-image-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  @variant md {
+    .resource-detail-hero-image-wrap {
+      justify-content: flex-end;
+    }
+  }
+
+  .resource-detail-hero-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .resource-detail-hero-image-frame {
+    position: relative;
+    width: min(100%, 26rem);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    box-shadow: 0 18px 42px -20px color-mix(in oklab, var(--primary) 40%, transparent);
+  }
+
   .resource-detail-body {
     background: var(--background);
   }
@@ -606,8 +699,21 @@
     min-width: 0;
   }
 
+  .resource-detail-main--wide {
+    max-width: 78rem;
+  }
+
+  .resource-detail-main--wide .resource-detail-richtext > * + * {
+    margin-top: 1.5rem;
+  }
+
   .resource-detail-richtext {
     max-width: 70ch;
+  }
+
+  .resource-detail-links-section {
+    margin-top: 2rem;
+    max-width: 78rem;
   }
 
   .resource-detail-empty {
@@ -619,9 +725,19 @@
   .resource-detail-aside {
     border: 1px solid var(--border);
     border-radius: 1rem;
-    background: var(--card);
+    background:
+      radial-gradient(
+        circle at top right,
+        color-mix(in oklab, var(--primary) 9%, transparent),
+        transparent 32%
+      ),
+      linear-gradient(180deg, color-mix(in oklab, var(--card) 94%, var(--primary) 6%), var(--card));
     padding: 1.25rem;
     height: fit-content;
+  }
+
+  .resource-detail-aside--wide {
+    width: 100%;
   }
 
   .resource-detail-aside-title {
@@ -636,15 +752,31 @@
     gap: 1rem;
   }
 
+  .resource-detail-link-list--cards {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
   .resource-detail-link-item {
     display: grid;
     gap: 0.4rem;
   }
 
+  .resource-detail-link-item--card {
+    border: 1px solid color-mix(in oklab, #f97316 52%, var(--border));
+    border-radius: 1rem;
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--primary) 8%, var(--card)),
+      color-mix(in oklab, var(--secondary) 6%, var(--card))
+    );
+    padding: 1rem;
+    box-shadow: 0 10px 24px color-mix(in oklab, var(--primary) 8%, transparent);
+  }
+
   .resource-detail-link {
     font-size: 0.95rem;
     font-weight: 700;
-    color: color-mix(in oklab, var(--primary) 82%, var(--foreground));
+    color: color-mix(in oklab, var(--primary) 90%, var(--foreground));
   }
 
   .resource-detail-link:hover {
@@ -659,8 +791,7 @@
 
   @variant lg {
     .resource-detail-grid {
-      grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
-      align-items: start;
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 

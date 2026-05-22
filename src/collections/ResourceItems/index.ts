@@ -1,5 +1,11 @@
 import type { CollectionConfig } from 'payload'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { Archive } from '@/blocks/ArchiveBlock/config'
+import { CallToAction } from '@/blocks/CallToAction/config'
+import { ConceptExplainer } from '@/blocks/ConceptExplainer/config'
+import { Content } from '@/blocks/Content/config'
+import { FormBlock } from '@/blocks/Form/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import {
@@ -69,11 +75,23 @@ export const ResourceItems: CollectionConfig = {
           name: 'detailContent',
           type: 'richText',
           localized: true,
-          required: true,
+          required: false,
           editor: defaultLexical,
           admin: {
             description:
-              'Main educational content for this resource. Add headings, links, and practical guidance.',
+              'Legacy plain-text content. Keep existing entries as-is or use Resource Layout for visual sections.',
+          },
+        },
+        {
+          name: 'resourceLayout',
+          type: 'blocks',
+          localized: true,
+          required: false,
+          blocks: [CallToAction, ConceptExplainer, Content, MediaBlock, Archive, FormBlock],
+          admin: {
+            initCollapsed: true,
+            description:
+              'Visual content builder for this resource detail page. Use Concept Explainer and Media blocks to present ideas graphically.',
           },
         },
         {

@@ -57,6 +57,7 @@ type Props = {
 
 export function TopicSearchFilter({ locale, topics }: Props) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [failedImageIds, setFailedImageIds] = useState<Set<string>>(new Set())
 
   const filteredTopics = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -78,6 +79,15 @@ export function TopicSearchFilter({ locale, topics }: Props) {
     }
 
     return localizePath(`/topic/${encodeURIComponent(normalizedSlug)}`, locale)
+  }
+
+  const markImageFailed = (topicId: string) => {
+    setFailedImageIds((prev) => {
+      if (prev.has(topicId)) return prev
+      const next = new Set(prev)
+      next.add(topicId)
+      return next
+    })
   }
 
   return (
@@ -133,6 +143,7 @@ export function TopicSearchFilter({ locale, topics }: Props) {
         {filteredTopics.map((t) => {
           const topicAccent = getTopicAccent(t.slug)
           const TopicIcon = TOPIC_ICON_MAP[t.iconName] || Stethoscope
+          const canRenderImage = Boolean(t.iconImageUrl) && !failedImageIds.has(t.id)
 
           return (
             <Link
@@ -146,13 +157,14 @@ export function TopicSearchFilter({ locale, topics }: Props) {
                 <span
                   className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
                 >
-                  {t.iconImageUrl ? (
+                  {canRenderImage ? (
                     <Image
                       src={t.iconImageUrl}
                       alt={t.iconImageAlt}
                       width={58}
                       height={58}
                       className="h-14 w-14 object-contain"
+                      onError={() => markImageFailed(t.id)}
                     />
                   ) : (
                     <TopicIcon className="h-10 w-10" strokeWidth={1.85} />

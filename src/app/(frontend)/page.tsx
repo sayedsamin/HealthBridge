@@ -5,6 +5,7 @@ import { HomeTopicsAndResources, type HomeTopic } from './_components/HomeTopics
 import { DEFAULT_POPULAR_RESOURCES } from './_components/PopularResourcesSection'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 // Static fallbacks — used when the admin has not yet populated the Homepage global
 const DEFAULTS = {
@@ -112,12 +113,12 @@ export default async function HomePage() {
             description: topic.description ?? 'Explore this health topic.',
             slug: topic.slug,
             icon: topic.icon ?? null,
-            iconImageUrl: media?.url ?? null,
+            iconImageUrl: getMediaUrl(media?.url) || null,
             iconImageAlt: media?.alt ?? topic.title,
           }
         })
       : TOPIC_FALLBACKS
-  console.log(homeTopics)
+
   return (
     <main className="min-h-screen overflow-x-clip bg-white dark:bg-slate-950">
       {/* Hero */}

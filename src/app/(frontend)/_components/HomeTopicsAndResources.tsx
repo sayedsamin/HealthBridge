@@ -109,6 +109,7 @@ export function HomeTopicsAndResources({
   popularResourcesViewAllUrl,
 }: Props) {
   const [showAllTopics, setShowAllTopics] = useState(false)
+  const [failedImageIds, setFailedImageIds] = useState<Set<string>>(new Set())
 
   const effectiveTopics = useMemo(() => {
     const normalizedTopics = (topics || []).filter((topic) => {
@@ -135,6 +136,15 @@ export function HomeTopicsAndResources({
 
   const quickTopics = useMemo(() => effectiveTopics.slice(0, 6), [effectiveTopics])
 
+  const markImageFailed = (topicId: string) => {
+    setFailedImageIds((prev) => {
+      if (prev.has(topicId)) return prev
+      const next = new Set(prev)
+      next.add(topicId)
+      return next
+    })
+  }
+
   return (
     <section className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 sm:px-6 lg:px-8">
       <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
@@ -145,6 +155,7 @@ export function HomeTopicsAndResources({
           {quickTopics.map((topic, index) => {
             const topicAccent = getTopicAccent(topic.slug, topic.icon)
             const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
+            const canRenderImage = Boolean(topic.iconImageUrl) && !failedImageIds.has(topic.id)
 
             return (
               <Link
@@ -156,13 +167,14 @@ export function HomeTopicsAndResources({
                 <span
                   className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
                 >
-                  {topic.iconImageUrl ? (
+                  {canRenderImage ? (
                     <Image
                       src={topic.iconImageUrl}
                       alt={topic.iconImageAlt}
                       width={28}
                       height={28}
                       className="h-7 w-7 object-contain"
+                      onError={() => markImageFailed(topic.id)}
                     />
                   ) : TopicIcon ? (
                     <TopicIcon className="h-5 w-5" strokeWidth={1.9} />
@@ -187,7 +199,7 @@ export function HomeTopicsAndResources({
             Health Topics
           </h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Featured topics from your Payload CMS.
+            Practical health guidance tailored for newcomers in Canada.
           </p>
         </div>
         {effectiveTopics.length > 4 ? (
@@ -208,6 +220,7 @@ export function HomeTopicsAndResources({
         {displayTopics.map((topic, index) => {
           const topicAccent = getTopicAccent(topic.slug, topic.icon)
           const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
+          const canRenderImage = Boolean(topic.iconImageUrl) && !failedImageIds.has(topic.id)
 
           return (
             <Link
@@ -222,13 +235,14 @@ export function HomeTopicsAndResources({
                 <span
                   className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
                 >
-                  {topic.iconImageUrl ? (
+                  {canRenderImage ? (
                     <Image
                       src={topic.iconImageUrl}
                       alt={topic.iconImageAlt}
                       width={46}
                       height={46}
                       className="h-11 w-11 object-contain"
+                      onError={() => markImageFailed(topic.id)}
                     />
                   ) : TopicIcon ? (
                     <TopicIcon className="h-8 w-8" strokeWidth={1.85} />

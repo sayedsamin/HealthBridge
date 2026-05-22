@@ -730,6 +730,10 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
+  /**
+   * Choose whether the image appears on the left or right side of the block.
+   */
+  mediaPosition?: ('left' | 'right') | null;
   media?: (string | null) | Media;
   writeUp?: {
     root: {
@@ -1009,9 +1013,9 @@ export interface ResourceItem {
    */
   detailIntro: string;
   /**
-   * Main educational content for this resource. Add headings, links, and practical guidance.
+   * Legacy plain-text content. Keep existing entries as-is or use Resource Layout for visual sections.
    */
-  detailContent: {
+  detailContent?: {
     root: {
       type: string;
       children: {
@@ -1025,7 +1029,13 @@ export interface ResourceItem {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
+  /**
+   * Visual content builder for this resource detail page. Use Concept Explainer and Media blocks to present ideas graphically.
+   */
+  resourceLayout?:
+    | (CallToActionBlock | ConceptExplainerBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[]
+    | null;
   /**
    * Optional image displayed to the right of the hero section on the detail page.
    */
@@ -1497,6 +1507,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  mediaPosition?: T;
   media?: T;
   writeUp?: T;
   id?: T;
@@ -1747,6 +1758,16 @@ export interface ResourceItemsSelect<T extends boolean = true> {
   description?: T;
   detailIntro?: T;
   detailContent?: T;
+  resourceLayout?:
+    | T
+    | {
+        cta?: T | CallToActionBlockSelect<T>;
+        conceptExplainer?: T | ConceptExplainerBlockSelect<T>;
+        content?: T | ContentBlockSelect<T>;
+        mediaBlock?: T | MediaBlockSelect<T>;
+        archive?: T | ArchiveBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
+      };
   heroImage?: T;
   helpfulLinks?:
     | T

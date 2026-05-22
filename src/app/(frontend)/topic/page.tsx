@@ -24,6 +24,7 @@ import { TopicRedirectNotice } from './TopicRedirectNotice'
 import { TopicSearchFilter } from './TopicSearchFilter'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import type { Locale } from '@/i18n/config'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { resolveFallbackTopicSlug } from './_utils/staticTopicFallbacks'
 
 // ── Icon map: matches values from the HealthTopics Payload collection ──────────
@@ -135,7 +136,7 @@ export default async function TopicIndexPage() {
             desc: t.description ?? '',
             lessons: t.lessonsCount ?? 10,
             iconName: t.icon ?? 'Stethoscope',
-            iconImageUrl: media?.url ?? null,
+            iconImageUrl: getMediaUrl(media?.url) || null,
             iconImageAlt: media?.alt ?? t.title,
           }
         })

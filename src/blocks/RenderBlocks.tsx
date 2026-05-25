@@ -1,7 +1,9 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, cache } from 'react'
 
 import type { Page } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -19,50 +21,89 @@ const blockComponents = {
   mediaBlock: MediaBlock,
 }
 
-export const RenderBlocks: React.FC<{
+const fetchMediaById = cache(async (id: string | number) => {
+  const payload = await getPayload({ config: configPromise })
+
+  try {
+    return await payload.findByID({
+      collection: 'media',
+      id: String(id),
+      depth: 1,
+      draft: true,
+      overrideAccess: true,
+    })
+  } catch {
+    return null
+  }
+})
+
+const resolveBlockMedia = async (media: unknown) => {
+  if (media && typeof media === 'object') return media
+  if (typeof media === 'string' || typeof media === 'number') {
+    return fetchMediaById(media)
+  }
+
+  return null
+}
+
+export const RenderBlocks = async ({
+  blocks,
+  locale,
+}: {
   blocks: Page['layout'][0][]
   locale?: Locale
-}> = (props) => {
-  const { blocks, locale } = props
-
+}) => {
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
   if (hasBlocks) {
-    return (
-      <Fragment>
-        {blocks.map((block, index) => {
-          const { blockType } = block
+    const renderedBlocks = await Promise.all(
+      blocks.map(async (block, index) => {
+        const { blockType } = block
 
-          if (blockType === 'mediaBlock') {
+        if (blockType === 'mediaBlock') {
+          const resolvedMedia = await resolveBlockMedia((block as { media?: unknown }).media)
+
+          return (
+            <div className="my-16" key={index}>
+              <MediaBlock
+                {...block}
+                media={resolvedMedia as never}
+                disableInnerContainer
+                locale={locale}
+                className="max-w-5xl mx-auto"
+                imgClassName="object-cover"
+              />
+            </div>
+          )
+        }
+
+        if (blockType === 'conceptExplainer') {
+          const resolvedGraphic = await resolveBlockMedia((block as { graphic?: unknown }).graphic)
+
+          return (
+            <div className="my-16" key={index}>
+              <ConceptExplainerBlock {...block} graphic={resolvedGraphic as never} />
+            </div>
+          )
+        }
+
+        if (blockType && blockType in blockComponents) {
+          const Block = blockComponents[blockType]
+
+          if (Block) {
             return (
               <div className="my-16" key={index}>
-                <MediaBlock
-                  {...block}
-                  disableInnerContainer
-                  locale={locale}
-                  className="max-w-5xl mx-auto"
-                  imgClassName="w-full max-h-[380px] object-cover"
-                />
+                {/* @ts-expect-error there may be some mismatch between the expected types here */}
+                <Block {...block} disableInnerContainer locale={locale} />
               </div>
             )
           }
-
-          if (blockType && blockType in blockComponents) {
-            const Block = blockComponents[blockType]
-
-            if (Block) {
-              return (
-                <div className="my-16" key={index}>
-                  {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                  <Block {...block} disableInnerContainer locale={locale} />
-                </div>
-              )
-            }
-          }
-          return null
-        })}
-      </Fragment>
+        }
+        return null
+      }),
     )
+
+    return <Fragment>{renderedBlocks}</Fragment>
   }
 
   return null

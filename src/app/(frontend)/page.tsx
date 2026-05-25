@@ -5,6 +5,7 @@ import { HomeTopicsAndResources, type HomeTopic } from './_components/HomeTopics
 import { DEFAULT_POPULAR_RESOURCES } from './_components/PopularResourcesSection'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 // Static fallbacks — used when the admin has not yet populated the Homepage global
 const DEFAULTS = {
@@ -112,7 +113,7 @@ export default async function HomePage() {
             description: topic.description ?? 'Explore this health topic.',
             slug: topic.slug,
             icon: topic.icon ?? null,
-            iconImageUrl: media?.url ?? null,
+            iconImageUrl: getMediaUrl(media?.url) || null,
             iconImageAlt: media?.alt ?? topic.title,
           }
         })
@@ -164,13 +165,15 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href={localizePath(d.primaryCTAUrl, locale)}
-                className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-blue-200/60 transition-colors hover:bg-blue-700"
+                className="animate-slideInUp rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-blue-200/60 transition-colors hover:bg-blue-700"
+                style={{ animationDelay: '0.1s' }}
               >
                 {d.primaryCTALabel}
               </Link>
               <Link
                 href={localizePath(d.secondaryCTAUrl, locale)}
-                className="rounded-full border border-blue-600 bg-white px-6 py-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 dark:bg-slate-800 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-slate-700"
+                className="animate-slideInUp rounded-full border border-blue-600 bg-white px-6 py-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 dark:bg-slate-800 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-slate-700"
+                style={{ animationDelay: '0.2s' }}
               >
                 {d.secondaryCTALabel}
               </Link>

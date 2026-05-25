@@ -109,6 +109,7 @@ export function HomeTopicsAndResources({
   popularResourcesViewAllUrl,
 }: Props) {
   const [showAllTopics, setShowAllTopics] = useState(false)
+  const [failedImageIds, setFailedImageIds] = useState<Set<string>>(new Set())
 
   const effectiveTopics = useMemo(() => {
     const normalizedTopics = (topics || []).filter((topic) => {
@@ -135,6 +136,15 @@ export function HomeTopicsAndResources({
 
   const quickTopics = useMemo(() => effectiveTopics.slice(0, 6), [effectiveTopics])
 
+  const markImageFailed = (topicId: string) => {
+    setFailedImageIds((prev) => {
+      if (prev.has(topicId)) return prev
+      const next = new Set(prev)
+      next.add(topicId)
+      return next
+    })
+  }
+
   return (
     <section className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 sm:px-6 lg:px-8">
       <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900">
@@ -142,26 +152,29 @@ export function HomeTopicsAndResources({
           Quick Access
         </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {quickTopics.map((topic) => {
+          {quickTopics.map((topic, index) => {
             const topicAccent = getTopicAccent(topic.slug, topic.icon)
             const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
+            const canRenderImage = Boolean(topic.iconImageUrl) && !failedImageIds.has(topic.id)
 
             return (
               <Link
                 key={`quick-${topic.id}`}
                 href={getTopicHref(topic.slug)}
-                className={`group inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 ${topicAccent.card}`}
+                className={`group animate-fadeInScale inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 ${topicAccent.card}`}
+                style={{ animationDelay: `${index * 0.08}s` }}
               >
                 <span
                   className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
                 >
-                  {topic.iconImageUrl ? (
+                  {canRenderImage ? (
                     <Image
                       src={topic.iconImageUrl}
                       alt={topic.iconImageAlt}
                       width={28}
                       height={28}
                       className="h-7 w-7 object-contain"
+                      onError={() => markImageFailed(topic.id)}
                     />
                   ) : TopicIcon ? (
                     <TopicIcon className="h-5 w-5" strokeWidth={1.9} />
@@ -186,7 +199,7 @@ export function HomeTopicsAndResources({
             Health Topics
           </h2>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Featured topics from your Payload CMS.
+            Practical health guidance tailored for newcomers in Canada.
           </p>
         </div>
         {effectiveTopics.length > 4 ? (
@@ -204,15 +217,17 @@ export function HomeTopicsAndResources({
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {displayTopics.map((topic) => {
+        {displayTopics.map((topic, index) => {
           const topicAccent = getTopicAccent(topic.slug, topic.icon)
           const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
+          const canRenderImage = Boolean(topic.iconImageUrl) && !failedImageIds.has(topic.id)
 
           return (
             <Link
               key={topic.id}
               href={getTopicHref(topic.slug)}
-              className={`group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 ${topicAccent.card}`}
+              className={`group animate-fadeInScale rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 ${topicAccent.card}`}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div
                 className={`mb-4 flex h-24 items-center rounded-xl bg-gradient-to-br px-4 ${topicAccent.panel}`}
@@ -220,13 +235,14 @@ export function HomeTopicsAndResources({
                 <span
                   className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
                 >
-                  {topic.iconImageUrl ? (
+                  {canRenderImage ? (
                     <Image
                       src={topic.iconImageUrl}
                       alt={topic.iconImageAlt}
                       width={46}
                       height={46}
                       className="h-11 w-11 object-contain"
+                      onError={() => markImageFailed(topic.id)}
                     />
                   ) : TopicIcon ? (
                     <TopicIcon className="h-8 w-8" strokeWidth={1.85} />

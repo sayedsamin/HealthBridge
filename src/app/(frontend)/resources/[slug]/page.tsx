@@ -19,13 +19,17 @@ import {
 import Link from 'next/link'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import RichText from '@/components/RichText'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
 import { defaultLocale, type Locale } from '@/i18n/config'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
+import type { Page } from '@/payload-types'
 import { translateContentDeep } from '@/utilities/translateContent'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { ResourceHeroImage } from './ResourceHeroImage'
 
 type Args = {
   params: Promise<{
@@ -47,6 +51,8 @@ type ResourceDetail = {
   description: string
   detailIntro?: string
   detailContent?: unknown
+  resourceLayout?: Page['layout'][0][] | null
+  heroImage?: { url?: string; alt?: string } | null
   helpfulLinks?: HelpfulLink[] | null
   icon?: string
 }
@@ -149,31 +155,52 @@ export default async function ResourceDetailPage({ params: paramsPromise }: Args
             <h1 className="resource-detail-title">{resource.title}</h1>
           </div>
 
-          <p className="resource-detail-intro">{resource.detailIntro || resource.description}</p>
+          <div className="grid gap-8 md:grid-cols-2 md:items-center">
+            <div>
+              <p className="resource-detail-intro">
+                {resource.detailIntro || resource.description}
+              </p>
+            </div>
+            {resource.heroImage && resource.heroImage.url && (
+              <div className="resource-detail-hero-image-wrap">
+                <ResourceHeroImage
+                  src={resource.heroImage.url}
+                  alt={resource.heroImage.alt || resource.title}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
       <section className="resource-detail-body">
         <div className="resources-container resources-container--section">
-          <div className="resource-detail-grid">
-            <div className="resource-detail-main">
-              {resource.detailContent ? (
-                <RichText
-                  className="resource-detail-richtext max-w-none"
-                  data={resource.detailContent as Parameters<typeof RichText>[0]['data']}
-                  enableGutter={false}
-                />
-              ) : (
-                <p className="resource-detail-empty">
-                  Detailed content is coming soon for this resource.
-                </p>
-              )}
-            </div>
+          <div className="resource-detail-main resource-detail-main--wide">
+            {Array.isArray(resource.resourceLayout) && resource.resourceLayout.length > 0 ? (
+              <div className="resource-detail-richtext max-w-none">
+                <RenderBlocks blocks={resource.resourceLayout} locale={locale} />
+              </div>
+            ) : resource.detailContent ? (
+              <RichText
+                className="resource-detail-richtext max-w-none"
+                data={resource.detailContent as Parameters<typeof RichText>[0]['data']}
+                enableGutter={false}
+              />
+            ) : (
+              <p className="resource-detail-empty">
+                Detailed content is coming soon for this resource.
+              </p>
+            )}
+          </div>
 
-            {hasHelpfulLinks && (
-              <aside className="resource-detail-aside" aria-label="Helpful links">
+          {hasHelpfulLinks && (
+            <section className="resource-detail-links-section" aria-label="Helpful links">
+              <aside
+                className="resource-detail-aside resource-detail-aside--wide"
+                aria-label="Helpful links"
+              >
                 <h2 className="resource-detail-aside-title">Helpful links</h2>
-                <ul className="resource-detail-link-list">
+                <ul className="resource-detail-link-list resource-detail-link-list--cards">
                   {(resource.helpfulLinks || []).map((link) => {
                     const href = link?.href || ''
                     const label = link?.label || 'Open resource'
@@ -184,7 +211,7 @@ export default async function ResourceDetailPage({ params: paramsPromise }: Args
                     return (
                       <li
                         key={link?.id || `${label}-${href}`}
-                        className="resource-detail-link-item"
+                        className="resource-detail-link-item resource-detail-link-item--card"
                       >
                         <a
                           href={href}
@@ -203,8 +230,8 @@ export default async function ResourceDetailPage({ params: paramsPromise }: Args
                   })}
                 </ul>
               </aside>
-            )}
-          </div>
+            </section>
+          )}
         </div>
       </section>
     </main>
@@ -225,6 +252,7 @@ const queryResourceBySlug = cache(
 
     const result = await payload.find({
       collection: 'resource-items',
+      depth: 2,
       locale,
       fallbackLocale: defaultLocale,
       draft: false,
@@ -241,6 +269,21 @@ const queryResourceBySlug = cache(
     if (!resource) return null
 
     const translated = await translateContentDeep(resource, targetLanguage)
+    const translatedRecord = translated as Record<string, unknown>
+
+    const heroImageData = translated.heroImage
+    const heroImage = heroImageData
+      ? {
+          url:
+            typeof heroImageData === 'object' && heroImageData !== null && 'url' in heroImageData
+              ? getMediaUrl(heroImageData.url as string | undefined)
+              : undefined,
+          alt:
+            typeof heroImageData === 'object' && heroImageData !== null && 'alt' in heroImageData
+              ? (heroImageData.alt as string | undefined)
+              : undefined,
+        }
+      : null
 
     return {
       id: String(translated.id),
@@ -249,6 +292,10 @@ const queryResourceBySlug = cache(
       description: typeof translated.description === 'string' ? translated.description : '',
       detailIntro: typeof translated.detailIntro === 'string' ? translated.detailIntro : undefined,
       detailContent: translated.detailContent,
+      resourceLayout: Array.isArray(translatedRecord.resourceLayout)
+        ? (translatedRecord.resourceLayout as Page['layout'][0][])
+        : null,
+      heroImage: heroImage ? heroImage : undefined,
       helpfulLinks: Array.isArray(translated.helpfulLinks)
         ? translated.helpfulLinks.map((link) => ({
             id: typeof link?.id === 'string' ? link.id : null,

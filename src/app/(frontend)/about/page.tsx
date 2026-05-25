@@ -77,11 +77,11 @@ export default async function AboutPage() {
       <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-8 md:grid-cols-2">
           {/* Mission */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/60">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900 dark:bg-emerald-900/30">
+            <h2 className="text-3xl font-bold tracking-tight text-emerald-900 dark:text-emerald-200">
               {data.missionTitle}
             </h2>
-            <p className="mt-4 text-lg leading-7 text-slate-700 dark:text-slate-300">
+            <p className="mt-4 text-lg leading-7 text-emerald-800 dark:text-emerald-300">
               {data.missionDescription}
             </p>
           </div>

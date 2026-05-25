@@ -123,6 +123,7 @@ const queryPageBySlug = cache(
       draft,
       locale,
       fallbackLocale: defaultLocale,
+      depth: 2,
       limit: 1,
       pagination: false,
       overrideAccess: draft,

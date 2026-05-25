@@ -11,6 +11,18 @@ export const MediaBlock: Block = {
   interfaceName: 'MediaBlock',
   fields: [
     {
+      name: 'mediaPosition',
+      type: 'select',
+      defaultValue: 'right',
+      options: [
+        { label: 'Image left, write-up right', value: 'left' },
+        { label: 'Write-up left, image right', value: 'right' },
+      ],
+      admin: {
+        description: 'Choose whether the image appears on the left or right side of the block.',
+      },
+    },
+    {
       name: 'media',
       type: 'upload',
       relationTo: 'media',

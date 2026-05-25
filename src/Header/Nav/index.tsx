@@ -6,32 +6,18 @@ import { usePathname } from 'next/navigation'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { getLocaleFromPathname, localizePath, stripLocaleFromPathname } from '@/i18n/routing'
 
-const topicSubmenus = [
-  { slug: 'healthcare-system', label: 'Healthcare System', icon: '🏥' },
-  { slug: 'mental-health', label: 'Mental Health', icon: '🧠' },
-  { slug: 'nutrition', label: 'Nutrition', icon: '🥗' },
-  { slug: 'youth-health', label: 'Youth Health', icon: '👶' },
-  { slug: 'public-health', label: 'Public Health', icon: '🌍' },
-  { slug: 'safety-info', label: 'Safety Info', icon: '🛡️' },
-]
+type HeaderNavProps = {
+  topicMenuItems: Array<{
+    slug: string
+    label: string
+  }>
+  resourceMenuItems: Array<{
+    slug: string
+    label: string
+  }>
+}
 
-const resourceSubmenus = [
-  { slug: 'healthcare-services', label: 'Find Healthcare Services', icon: '🏥' },
-  { slug: 'emergency-help', label: 'Emergency & Crisis Help', icon: '🚨' },
-  { slug: 'mental-health', label: 'Mental Health Support', icon: '🧠' },
-  { slug: 'health-library', label: 'Health Learning Library', icon: '📚' },
-  { slug: 'lab-results', label: 'Understand Lab Results', icon: '🔬' },
-  { slug: 'nutrition', label: 'Nutrition & Wellness', icon: '🥗' },
-  { slug: 'newcomer-support', label: 'Newcomer Support', icon: '🌐' },
-  { slug: 'youth-health', label: 'Youth Health Resources', icon: '💙' },
-  { slug: 'pharmacy', label: 'Medication & Pharmacy Help', icon: '💊' },
-  { slug: 'community-services', label: 'Community Services', icon: '🤝' },
-  { slug: 'printable-resources', label: 'Printable Resources', icon: '📄' },
-  { slug: 'language-support', label: 'Language & Translation Support', icon: '🌍' },
-  { slug: 'interactive-learning', label: 'Interactive Learning', icon: '▶️' },
-]
-
-export const HeaderNav: React.FC = () => {
+export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMenuItems }) => {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [topicOpen, setTopicOpen] = useState(false)
@@ -104,7 +90,7 @@ export const HeaderNav: React.FC = () => {
                 All Topics →
               </Link>
               <div className="my-1 h-px bg-slate-100 dark:bg-slate-700" />
-              {topicSubmenus.map((topic) => (
+              {topicMenuItems.map((topic) => (
                 <Link
                   key={topic.slug}
                   href={localizePath(`/topic/${topic.slug}`, locale)}
@@ -115,7 +101,7 @@ export const HeaderNav: React.FC = () => {
                       : 'text-slate-700 dark:text-slate-300'
                   }`}
                 >
-                  <span>{topic.icon}</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
                   {topic.label}
                 </Link>
               ))}
@@ -151,7 +137,7 @@ export const HeaderNav: React.FC = () => {
                 All Resources →
               </Link>
               <div className="my-1 h-px bg-slate-100 dark:bg-slate-700" />
-              {resourceSubmenus.map((resource) => (
+              {resourceMenuItems.map((resource) => (
                 <Link
                   key={resource.slug}
                   href={localizePath(`/resources/${resource.slug}`, locale)}
@@ -162,7 +148,7 @@ export const HeaderNav: React.FC = () => {
                       : 'text-slate-700 dark:text-slate-300'
                   }`}
                 >
-                  <span>{resource.icon}</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
                   {resource.label}
                 </Link>
               ))}
@@ -237,7 +223,7 @@ export const HeaderNav: React.FC = () => {
                 >
                   All Topics
                 </Link>
-                {topicSubmenus.map((topic) => (
+                {topicMenuItems.map((topic) => (
                   <Link
                     key={topic.slug}
                     href={localizePath(`/topic/${topic.slug}`, locale)}
@@ -247,7 +233,7 @@ export const HeaderNav: React.FC = () => {
                         : 'text-slate-600 dark:text-slate-400'
                     }`}
                   >
-                    <span>{topic.icon}</span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
                     {topic.label}
                   </Link>
                 ))}
@@ -279,7 +265,7 @@ export const HeaderNav: React.FC = () => {
                 >
                   All Resources
                 </Link>
-                {resourceSubmenus.map((resource) => (
+                {resourceMenuItems.map((resource) => (
                   <Link
                     key={resource.slug}
                     href={localizePath(`/resources/${resource.slug}`, locale)}
@@ -289,7 +275,7 @@ export const HeaderNav: React.FC = () => {
                         : 'text-slate-600 dark:text-slate-400'
                     }`}
                   >
-                    <span>{resource.icon}</span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
                     {resource.label}
                   </Link>
                 ))}

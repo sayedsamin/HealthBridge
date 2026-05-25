@@ -20,6 +20,7 @@ import type {
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { cn } from '@/utilities/ui'
 
 type NodeTypes =
@@ -38,6 +39,54 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  upload: ({ node }) => {
+    const uploadNode = node as {
+      fields?: { alt?: string }
+      value?:
+        | string
+        | number
+        | {
+            alt?: string
+            filename?: string
+            mimeType?: string
+            url?: string
+            width?: number
+            height?: number
+            updatedAt?: string
+          }
+    }
+
+    if (!uploadNode.value || typeof uploadNode.value !== 'object') {
+      return null
+    }
+
+    const uploadDoc = uploadNode.value
+    const fallbackUrl = uploadDoc.filename ? `/media/${encodeURIComponent(uploadDoc.filename)}` : ''
+    const resolvedUrl = getMediaUrl(uploadDoc.url || fallbackUrl)
+
+    if (!resolvedUrl) {
+      return null
+    }
+
+    if (uploadDoc.mimeType && !uploadDoc.mimeType.startsWith('image')) {
+      return (
+        <a href={resolvedUrl} rel="noopener noreferrer" target="_blank">
+          {uploadDoc.filename || 'Open file'}
+        </a>
+      )
+    }
+
+    return (
+      <img
+        src={resolvedUrl}
+        alt={uploadNode.fields?.alt || uploadDoc.alt || ''}
+        width={uploadDoc.width}
+        height={uploadDoc.height}
+        loading="lazy"
+        className="my-6 h-auto w-full rounded-xl border border-border"
+      />
+    )
+  },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (

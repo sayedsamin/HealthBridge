@@ -76,6 +76,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
+  const useBlurPlaceholder = Boolean(priority)
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
   const sizes = sizeFromProps
@@ -89,14 +90,14 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   }
 
   return (
-    <picture className={cn(pictureClassName)}>
+    <picture className={cn(fill && 'relative block min-h-[1px]', pictureClassName)}>
       <NextImage
         alt={alt || ''}
-        className={cn(imgClassName)}
+        className={cn(!fill && 'h-auto w-auto max-w-full', imgClassName)}
         fill={fill}
         height={!fill ? height : undefined}
-        placeholder="blur"
-        blurDataURL={placeholderBlur}
+        placeholder={useBlurPlaceholder ? 'blur' : 'empty'}
+        blurDataURL={useBlurPlaceholder ? placeholderBlur : undefined}
         priority={priority}
         quality={100}
         loading={loading}

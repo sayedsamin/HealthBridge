@@ -25,12 +25,15 @@ import { defaultLocale, locales } from './i18n/config'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const databaseURL = process.env.DATABASE_URL || process.env.REMOTE_DATABASE_URL
+const localDatabaseURL = process.env.LOCAL_DATABASE_URL || 'mongodb://127.0.0.1:27017/health-bridge'
+
+const databaseURL =
+  process.env.DATABASE_URL ||
+  process.env.REMOTE_DATABASE_URL ||
+  (process.env.NODE_ENV === 'production' ? undefined : localDatabaseURL)
 
 if (!databaseURL) {
-  throw new Error(
-    'Missing remote MongoDB connection string. Set REMOTE_DATABASE_URL (or DATABASE_URL).',
-  )
+  throw new Error('Missing MongoDB connection string. Set DATABASE_URL (or REMOTE_DATABASE_URL).')
 }
 
 export default buildConfig({

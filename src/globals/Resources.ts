@@ -49,7 +49,7 @@ export const Resources: GlobalConfig = {
         {
           name: 'heroPrimaryHref',
           type: 'text',
-          defaultValue: '/health-topics',
+          defaultValue: '/topic',
         },
         {
           name: 'heroSecondaryLabel',
@@ -248,7 +248,7 @@ export const Resources: GlobalConfig = {
         {
           name: 'ctaHref',
           type: 'text',
-          defaultValue: '/health-topics',
+          defaultValue: '/topic',
         },
         {
           name: 'ctaSecondaryLabel',

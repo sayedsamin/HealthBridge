@@ -24,6 +24,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
   const [resourcesOpen, setResourcesOpen] = useState(false)
   const [mobileTopicOpen, setMobileTopicOpen] = useState(false)
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
   const topicRef = useRef<HTMLDivElement>(null)
   const resourcesRef = useRef<HTMLDivElement>(null)
   const locale = getLocaleFromPathname(pathname)
@@ -36,24 +37,37 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
   }, [pathname])
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (topicRef.current && !topicRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node
+
+      if (topicRef.current && !topicRef.current.contains(target)) {
         setTopicOpen(false)
       }
-      if (resourcesRef.current && !resourcesRef.current.contains(e.target as Node)) {
+      if (resourcesRef.current && !resourcesRef.current.contains(target)) {
         setResourcesOpen(false)
+      }
+
+      if (menuOpen && navRef.current && !navRef.current.contains(target)) {
+        setMenuOpen(false)
+        setMobileTopicOpen(false)
+        setMobileResourcesOpen(false)
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener('touchstart', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [menuOpen])
 
   const isTopicActive = activePathname.startsWith('/topic')
   const isResourcesActive = activePathname.startsWith('/resources')
 
   return (
-    <nav className="relative">
+    <nav className="relative" ref={navRef}>
       <div className="hidden items-center gap-4 text-base md:flex">
         <Link
           href={localizePath('/', locale)}

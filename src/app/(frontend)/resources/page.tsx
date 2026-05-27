@@ -21,6 +21,7 @@ import { STATIC_RESOURCES_FALLBACK } from './_utils/staticResourcesFallback'
 import { fetchResourceItems } from '../_utils/fetchResourceItems'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
+import { MultilingualSupportMenu } from './_components/MultilingualSupportMenu'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Hospital,
@@ -36,6 +37,16 @@ const ICON_MAP: Record<string, LucideIcon> = {
   FileText,
   Languages,
   PlayCircle,
+}
+
+const normalizeTopicPagePath = (href: string | undefined): string => {
+  const normalized = href?.trim().toLowerCase()
+
+  if (!normalized || normalized === '/health-topics' || normalized === '/topics') {
+    return '/topic'
+  }
+
+  return href as string
 }
 
 const STATIC_RESOURCES = [
@@ -140,6 +151,9 @@ export default async function ResourcesPage() {
   const globalData = (await fetchResourcesGlobal(locale, language)) || STATIC_RESOURCES_FALLBACK
   const cmsItems = await fetchResourceItems().catch(() => [])
   const resources = cmsItems.length > 0 ? cmsItems : STATIC_RESOURCES
+  const primaryCtaHref = normalizeTopicPagePath(
+    globalData.ctaHref || STATIC_RESOURCES_FALLBACK.ctaHref,
+  )
 
   return (
     <main className="resources-page">
@@ -276,21 +290,18 @@ export default async function ResourcesPage() {
 
           <div className="resources-cta-actions">
             <Link
-              href={localizePath(globalData.ctaHref || STATIC_RESOURCES_FALLBACK.ctaHref, locale)}
+              href={localizePath(primaryCtaHref, locale)}
               className="resources-cta-button resources-cta-button--primary"
             >
               {globalData.ctaLabel || STATIC_RESOURCES_FALLBACK.ctaLabel}
             </Link>
 
-            <Link
-              href={localizePath(
-                globalData.ctaSecondaryHref || STATIC_RESOURCES_FALLBACK.ctaSecondaryHref,
-                locale,
-              )}
-              className="resources-cta-button resources-cta-button--secondary"
-            >
-              {globalData.ctaSecondaryLabel || STATIC_RESOURCES_FALLBACK.ctaSecondaryLabel}
-            </Link>
+            <MultilingualSupportMenu
+              currentLocale={locale}
+              buttonLabel={
+                globalData.ctaSecondaryLabel || STATIC_RESOURCES_FALLBACK.ctaSecondaryLabel
+              }
+            />
           </div>
         </div>
       </section>

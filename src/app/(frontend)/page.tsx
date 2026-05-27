@@ -3,9 +3,11 @@ import { fetchHomepageGlobal } from './_utils/fetchHomepage'
 import { fetchAllTopics, type MediaFromPayload } from './topic/_utils/fetchTopicBySlug'
 import { HomeTopicsAndResources, type HomeTopic } from './_components/HomeTopicsAndResources'
 import { DEFAULT_POPULAR_RESOURCES } from './_components/PopularResourcesSection'
+import { fetchResourceItems } from './_utils/fetchResourceItems'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { toKebabCase } from '@/utilities/toKebabCase'
 
 // Static fallbacks — used when the admin has not yet populated the Homepage global
 const DEFAULTS = {
@@ -67,6 +69,59 @@ export default async function HomePage() {
   const language = await getRequestLanguage()
   const cms = await fetchHomepageGlobal(locale, language)
   const cmsTopics = await fetchAllTopics(locale, language)
+  const resourceItems = await fetchResourceItems().catch(() => [])
+
+  const resourceSlugSet = new Set(resourceItems.map((item) => item.slug))
+  const resourceSlugByTitle = new Map(
+    resourceItems.map((item) => [item.title.trim().toLowerCase(), item.slug]),
+  )
+
+  const resolveResourceDetailHref = (resource: {
+    id: string
+    title: string
+    href: string
+  }): string => {
+    const rawHref = resource.href.trim()
+
+    if (rawHref.startsWith('/resources/')) {
+      const normalizedPath = rawHref.split('?')[0].replace(/\/+$/, '')
+      const slug = normalizedPath.split('/')[2]
+
+      if (slug && resourceSlugSet.has(slug)) {
+        return `/resources/${slug}`
+      }
+
+      return '/resources'
+    }
+
+    const titleMatch = resourceSlugByTitle.get(resource.title.trim().toLowerCase())
+    if (titleMatch) {
+      return `/resources/${titleMatch}`
+    }
+
+    const slugFromId = toKebabCase(resource.id)
+    if (resourceSlugSet.has(slugFromId)) {
+      return `/resources/${slugFromId}`
+    }
+
+    const slugFromTitle = toKebabCase(resource.title)
+    if (resourceSlugSet.has(slugFromTitle)) {
+      return `/resources/${slugFromTitle}`
+    }
+
+    return '/resources'
+  }
+
+  const popularResourcesFromResourceItems = resourceItems
+    .filter((item) => item.slug && item.title)
+    .slice(0, 6)
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description || 'Explore this resource topic.',
+      href: `/resources/${item.slug}`,
+      icon: item.icon,
+    }))
 
   const d = {
     badgeText: cms?.badgeText || DEFAULTS.badgeText,
@@ -85,19 +140,21 @@ export default async function HomePage() {
       cms?.popularResourcesDescription ||
       'Quick links to trusted health resources and support tools.',
     popularResourcesViewAllLabel: cms?.popularResourcesViewAllLabel || 'View all resources',
-    popularResourcesViewAllUrl: cms?.popularResourcesViewAllUrl || '/posts',
+    popularResourcesViewAllUrl: cms?.popularResourcesViewAllUrl || '/resources',
   }
 
   const popularResources =
-    cms?.popularResources && cms.popularResources.length > 0
-      ? cms.popularResources.map((resource) => ({
-          id: resource.id,
-          title: resource.title,
-          description: resource.description,
-          href: resource.href,
-          icon: resource.icon,
-        }))
-      : DEFAULT_POPULAR_RESOURCES
+    popularResourcesFromResourceItems.length > 0
+      ? popularResourcesFromResourceItems
+      : cms?.popularResources && cms.popularResources.length > 0
+        ? cms.popularResources.map((resource) => ({
+            id: resource.id,
+            title: resource.title,
+            description: resource.description,
+            href: resolveResourceDetailHref(resource),
+            icon: resource.icon,
+          }))
+        : DEFAULT_POPULAR_RESOURCES
 
   const homeTopics =
     cmsTopics.length > 0

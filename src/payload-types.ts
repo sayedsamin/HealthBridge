@@ -577,6 +577,9 @@ export interface HealthTopic {
          */
         keyPoints?:
           | {
+              /**
+               * Keep each key point brief (max 140 characters).
+               */
               point: string;
               id?: string | null;
             }[]
@@ -2220,7 +2223,7 @@ export interface Homepage {
         title: string;
         description: string;
         /**
-         * Target URL (e.g., /posts, /search).
+         * Target URL (e.g., /resources/lab-results).
          */
         href: string;
         icon: 'FlaskConical' | 'Salad' | 'HelpingHand' | 'FileText' | 'ShieldCheck' | 'MessageCircleQuestion';

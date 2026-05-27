@@ -16,6 +16,8 @@ const normalizeTopicSlug = (value: unknown): string => {
     .replace(/^-+|-+$/g, '')
 }
 
+const MAX_KEY_POINT_LENGTH = 140
+
 export const HealthTopics: CollectionConfig = {
   slug: 'health-topics',
   access: {
@@ -232,6 +234,21 @@ export const HealthTopics: CollectionConfig = {
                   type: 'text',
                   localized: true,
                   required: true,
+                  maxLength: MAX_KEY_POINT_LENGTH,
+                  validate: (value) => {
+                    if (typeof value !== 'string') {
+                      return true
+                    }
+
+                    if (value.length > MAX_KEY_POINT_LENGTH) {
+                      return `Key points can be at most ${MAX_KEY_POINT_LENGTH} characters.`
+                    }
+
+                    return true
+                  },
+                  admin: {
+                    description: `Keep each key point brief (max ${MAX_KEY_POINT_LENGTH} characters).`,
+                  },
                 },
               ],
             },

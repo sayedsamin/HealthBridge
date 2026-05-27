@@ -4,7 +4,7 @@ export const STATIC_RESOURCES_FALLBACK = {
     'Find trusted health information, practical support, and quick links for newcomers navigating care, settlement, and everyday wellness in Canada.',
   heroBadge: 'Trusted Help',
   heroPrimaryLabel: 'Explore Health Topics',
-  heroPrimaryHref: '/health-topics',
+  heroPrimaryHref: '/topic',
   heroSecondaryLabel: 'Start Learning',
   heroSecondaryHref: '/learning',
   browseTitle: 'Browse Resources',
@@ -68,7 +68,7 @@ export const STATIC_RESOURCES_FALLBACK = {
   ctaDescription:
     'Learn about healthcare services, wellness, safety, mental health, and community support in a simple, multilingual, and culturally inclusive way.',
   ctaLabel: 'Explore Topics',
-  ctaHref: '/health-topics',
+  ctaHref: '/topic',
   ctaSecondaryLabel: 'Multilingual Support',
   ctaSecondaryHref: '/resources/language-support',
 }

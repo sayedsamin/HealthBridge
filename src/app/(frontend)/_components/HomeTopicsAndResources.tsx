@@ -347,10 +347,10 @@ export function HomeTopicsAndResources({
 
       <div className="mt-6 rounded-3xl bg-slate-100 px-6 py-10 dark:bg-slate-900/70 sm:px-8 sm:py-12 lg:px-10">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-4xl font-bold tracking-[-0.025em] text-slate-900 dark:text-white sm:text-5xl">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             A holistic approach to healthcare
           </h2>
-          <p className="mt-2 max-w-4xl text-[22px] leading-[1.45] text-slate-700 dark:text-slate-300">
+          <p className="mt-1 max-w-4xl text-sm leading-6 text-slate-600 dark:text-slate-400">
             Get information, support and tools to improve health outcomes as a newcomer in Canada.{' '}
             <Link
               href={localizePath('/resources', locale)}
@@ -366,10 +366,10 @@ export function HomeTopicsAndResources({
             <div className="mx-auto mb-5 inline-flex h-36 w-36 items-center justify-center text-emerald-500 dark:text-emerald-300">
               <HolisticCareIllustration />
             </div>
-            <h3 className="text-[42px] font-semibold leading-[1.08] tracking-[-0.015em] text-slate-900 dark:text-white">
+            <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
               Take control of your health
-            </h3>
-            <p className="mx-auto mt-2 max-w-md text-[22px] leading-[1.45] text-slate-700 dark:text-slate-300">
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
               Explore major health topics and practical resources designed for newcomers and
               families in Canada.
             </p>
@@ -379,10 +379,10 @@ export function HomeTopicsAndResources({
             <div className="mx-auto mb-5 inline-flex h-36 w-36 items-center justify-center text-emerald-500 dark:text-emerald-300">
               <NativeLanguageIllustration />
             </div>
-            <h3 className="text-[42px] font-semibold leading-[1.08] tracking-[-0.015em] text-slate-900 dark:text-white">
+            <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
               Access health topics and resources in your native language
-            </h3>
-            <p className="mx-auto mt-2 max-w-md text-[22px] leading-[1.45] text-slate-700 dark:text-slate-300">
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
               Find culturally responsive guidance in familiar language so healthcare navigation in
               Canada feels clear, safe and practical.
             </p>
@@ -392,10 +392,10 @@ export function HomeTopicsAndResources({
             <div className="mx-auto mb-5 inline-flex h-36 w-36 items-center justify-center text-emerald-500 dark:text-emerald-300">
               <AlwaysOnSupportIllustration />
             </div>
-            <h3 className="text-[42px] font-semibold leading-[1.08] tracking-[-0.015em] text-slate-900 dark:text-white">
+            <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
               Get online support 24/7
-            </h3>
-            <p className="mx-auto mt-2 max-w-md text-[22px] leading-[1.45] text-slate-700 dark:text-slate-300">
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
               Access health learning, safety resources, and essential service navigation whenever
               you need it.
             </p>

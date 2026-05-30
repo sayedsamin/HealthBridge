@@ -32,7 +32,7 @@ export async function Footer() {
 
         <div className="container py-16 md:py-20">
           <div className="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:gap-6">
-            <h2 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
               Subscribe to our newsletter
             </h2>
             <form className="flex w-full flex-col gap-3 sm:flex-row lg:max-w-3xl" action="#">
@@ -44,11 +44,11 @@ export async function Footer() {
                 name="email"
                 type="email"
                 placeholder="email@address.com"
-                className="h-14 w-full rounded-lg border border-white/70 bg-white px-4 text-lg text-slate-800 outline-none ring-blue-500 placeholder:text-slate-500 focus:ring-2"
+                className="h-14 w-full rounded-lg border border-white/70 bg-white px-4 text-base text-slate-800 outline-none ring-blue-500 placeholder:text-slate-500 focus:ring-2"
               />
               <button
                 type="submit"
-                className="h-14 rounded-lg bg-blue-600 px-8 text-lg font-semibold text-white transition-colors hover:bg-blue-700"
+                className="h-14 rounded-lg bg-blue-600 px-8 text-base font-semibold text-white transition-colors hover:bg-blue-700"
               >
                 Join
               </button>

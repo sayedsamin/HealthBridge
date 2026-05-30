@@ -1,6 +1,7 @@
 import { unstable_cache } from 'next/cache'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 export type ResourceItem = {
   id: string
@@ -8,6 +9,8 @@ export type ResourceItem = {
   slug: string
   description: string
   icon: string
+  imageUrl: string | null
+  imageAlt: string
   order?: number | null
 }
 
@@ -17,15 +20,27 @@ const fetchResourceItemsRaw = async (): Promise<ResourceItem[]> => {
     collection: 'resource-items',
     limit: 100,
     sort: 'order',
-    depth: 0,
+    depth: 1,
   })
 
   return result.docs.map((doc) => ({
+    // Reuse the existing hero image as optional card media on the resources grid.
+    // If no image exists, the UI falls back to the icon.
     id: String(doc.id),
     title: typeof doc.title === 'string' ? doc.title : '',
     slug: typeof doc.slug === 'string' ? doc.slug : '',
     description: typeof doc.description === 'string' ? doc.description : '',
     icon: typeof doc.icon === 'string' ? doc.icon : 'Hospital',
+    imageUrl:
+      doc.heroImage && typeof doc.heroImage === 'object' && typeof doc.heroImage.url === 'string'
+        ? getMediaUrl(doc.heroImage.url)
+        : null,
+    imageAlt:
+      doc.heroImage && typeof doc.heroImage === 'object' && typeof doc.heroImage.alt === 'string'
+        ? doc.heroImage.alt
+        : typeof doc.title === 'string'
+          ? doc.title
+          : 'Resource image',
     order: typeof doc.order === 'number' ? doc.order : null,
   }))
 }

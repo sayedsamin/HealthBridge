@@ -2227,6 +2227,10 @@ export interface Homepage {
          */
         href: string;
         icon: 'FlaskConical' | 'Salad' | 'HelpingHand' | 'FileText' | 'ShieldCheck' | 'MessageCircleQuestion';
+        /**
+         * Optional card image. When provided, it appears as the full top media section of the card.
+         */
+        image?: (string | null) | Media;
       }[]
     | null;
   _status?: ('draft' | 'published') | null;
@@ -2458,6 +2462,7 @@ export interface HomepageSelect<T extends boolean = true> {
         description?: T;
         href?: T;
         icon?: T;
+        image?: T;
       };
   _status?: T;
   updatedAt?: T;

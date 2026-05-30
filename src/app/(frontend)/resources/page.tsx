@@ -56,6 +56,8 @@ const STATIC_RESOURCES = [
     description:
       'Locate family doctors, walk-in clinics, urgent care centres, and hospitals in Manitoba.',
     icon: 'Hospital',
+    imageUrl: null,
+    imageAlt: 'Find Healthcare Services',
     slug: 'healthcare-services',
   },
   {
@@ -63,6 +65,8 @@ const STATIC_RESOURCES = [
     title: 'Emergency & Crisis Help',
     description: 'Quick access to emergency contacts, crisis lines, and urgent support services.',
     icon: 'ShieldAlert',
+    imageUrl: null,
+    imageAlt: 'Emergency and Crisis Help',
     slug: 'emergency-help',
   },
   {
@@ -71,6 +75,8 @@ const STATIC_RESOURCES = [
     description:
       'Access counseling, wellness support, stress management, and mental health resources.',
     icon: 'Brain',
+    imageUrl: null,
+    imageAlt: 'Mental Health Support',
     slug: 'mental-health',
   },
   {
@@ -78,6 +84,8 @@ const STATIC_RESOURCES = [
     title: 'Health Learning Library',
     description: 'Explore trusted health education topics designed for newcomers and families.',
     icon: 'BookOpen',
+    imageUrl: null,
+    imageAlt: 'Health Learning Library',
     slug: 'health-library',
   },
   {
@@ -85,6 +93,8 @@ const STATIC_RESOURCES = [
     title: 'Understand Lab Results',
     description: 'Learn what common lab tests and medical reports mean in simple language.',
     icon: 'FlaskConical',
+    imageUrl: null,
+    imageAlt: 'Understand Lab Results',
     slug: 'lab-results',
   },
   {
@@ -92,6 +102,8 @@ const STATIC_RESOURCES = [
     title: 'Nutrition & Wellness',
     description: 'Learn about healthy eating, food labels, exercise, and family wellness.',
     icon: 'Apple',
+    imageUrl: null,
+    imageAlt: 'Nutrition and Wellness',
     slug: 'nutrition',
   },
   {
@@ -99,6 +111,8 @@ const STATIC_RESOURCES = [
     title: 'Newcomer Support',
     description: 'Find settlement support, interpreter services, and healthcare navigation guides.',
     icon: 'Globe',
+    imageUrl: null,
+    imageAlt: 'Newcomer Support',
     slug: 'newcomer-support',
   },
   {
@@ -106,6 +120,8 @@ const STATIC_RESOURCES = [
     title: 'Youth Health Resources',
     description: 'Explore youth-friendly resources on relationships, consent, and sexual health.',
     icon: 'HeartPulse',
+    imageUrl: null,
+    imageAlt: 'Youth Health Resources',
     slug: 'youth-health',
   },
   {
@@ -113,6 +129,8 @@ const STATIC_RESOURCES = [
     title: 'Medication & Pharmacy Help',
     description: 'Understand prescriptions, pharmacy services, vaccines, and medication safety.',
     icon: 'Pill',
+    imageUrl: null,
+    imageAlt: 'Medication and Pharmacy Help',
     slug: 'pharmacy',
   },
   {
@@ -120,6 +138,8 @@ const STATIC_RESOURCES = [
     title: 'Community Services',
     description: 'Discover food banks, shelters, community centres, and support organizations.',
     icon: 'Users',
+    imageUrl: null,
+    imageAlt: 'Community Services',
     slug: 'community-services',
   },
   {
@@ -127,6 +147,8 @@ const STATIC_RESOURCES = [
     title: 'Printable Resources',
     description: 'Download healthcare guides, checklists, emergency contacts, and learning sheets.',
     icon: 'FileText',
+    imageUrl: null,
+    imageAlt: 'Printable Resources',
     slug: 'printable-resources',
   },
   {
@@ -134,6 +156,8 @@ const STATIC_RESOURCES = [
     title: 'Language & Translation Support',
     description: 'Access multilingual health information and interpretation support.',
     icon: 'Languages',
+    imageUrl: null,
+    imageAlt: 'Language and Translation Support',
     slug: 'language-support',
   },
   {
@@ -141,6 +165,8 @@ const STATIC_RESOURCES = [
     title: 'Interactive Learning',
     description: 'Watch videos, complete quizzes, and explore interactive health education tools.',
     icon: 'PlayCircle',
+    imageUrl: null,
+    imageAlt: 'Interactive Learning',
     slug: 'interactive-learning',
   },
 ]
@@ -216,18 +242,33 @@ export default async function ResourcesPage() {
             {resources.map((resource) => {
               const Icon = ICON_MAP[resource.icon] ?? Hospital
               const href = localizePath(`/resources/${resource.slug}`, locale)
+              const hasCardImage = Boolean(resource.imageUrl)
 
               return (
                 <Link key={resource.id} href={href} className="resource-card">
-                  <div className="resource-card-icon">
-                    <Icon size={28} />
+                  {hasCardImage ? (
+                    <div className="resource-card-media">
+                      <Image
+                        src={resource.imageUrl as string}
+                        alt={resource.imageAlt || resource.title}
+                        fill
+                        sizes="(min-width: 1280px) 28vw, (min-width: 768px) 46vw, 94vw"
+                        className="resource-card-media-image"
+                      />
+                    </div>
+                  ) : (
+                    <div className="resource-card-icon">
+                      <Icon size={28} />
+                    </div>
+                  )}
+
+                  <div className="resource-card-content">
+                    <h3 className="resource-card-title">{resource.title}</h3>
+
+                    <p className="resource-card-description">{resource.description}</p>
+
+                    <div className="resource-card-link">Learn More →</div>
                   </div>
-
-                  <h3 className="resource-card-title">{resource.title}</h3>
-
-                  <p className="resource-card-description">{resource.description}</p>
-
-                  <div className="resource-card-link">Learn More →</div>
                 </Link>
               )
             })}

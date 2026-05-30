@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ChevronRight,
@@ -21,6 +22,8 @@ export type PopularResourceItem = {
   description: string
   href: string
   icon: string
+  imageUrl?: string | null
+  imageAlt?: string
 }
 
 const RESOURCE_ICON_MAP: Record<string, LucideIcon> = {
@@ -39,6 +42,8 @@ export const DEFAULT_POPULAR_RESOURCES: PopularResourceItem[] = [
     description: 'Understand your lab results with simple breakdowns.',
     href: '/resources/lab-results',
     icon: 'FlaskConical',
+    imageUrl: null,
+    imageAlt: 'Lab Test Explained',
   },
   {
     id: 'nutrition-guides',
@@ -46,6 +51,8 @@ export const DEFAULT_POPULAR_RESOURCES: PopularResourceItem[] = [
     description: 'Healthy food choices for individuals and families.',
     href: '/resources/nutrition',
     icon: 'Salad',
+    imageUrl: null,
+    imageAlt: 'Nutrition Tips',
   },
   {
     id: 'community-support',
@@ -53,6 +60,8 @@ export const DEFAULT_POPULAR_RESOURCES: PopularResourceItem[] = [
     description: 'Find local services and settlement support resources.',
     href: '/resources/community-services',
     icon: 'HelpingHand',
+    imageUrl: null,
+    imageAlt: 'Community Support',
   },
   {
     id: 'forms-and-documents',
@@ -60,6 +69,8 @@ export const DEFAULT_POPULAR_RESOURCES: PopularResourceItem[] = [
     description: 'Access key forms and healthcare documents quickly.',
     href: '/resources/printable-resources',
     icon: 'FileText',
+    imageUrl: null,
+    imageAlt: 'Forms and Documents',
   },
   {
     id: 'safety-info',
@@ -67,6 +78,8 @@ export const DEFAULT_POPULAR_RESOURCES: PopularResourceItem[] = [
     description: 'Learn what to do in urgent and non-urgent situations.',
     href: '/resources/emergency-help',
     icon: 'ShieldCheck',
+    imageUrl: null,
+    imageAlt: 'Safety Information',
   },
   {
     id: 'ask-questions',
@@ -74,6 +87,8 @@ export const DEFAULT_POPULAR_RESOURCES: PopularResourceItem[] = [
     description: 'Browse answers to common health and newcomer questions.',
     href: '/resources/health-library',
     icon: 'MessageCircleQuestion',
+    imageUrl: null,
+    imageAlt: 'Ask a Question',
   },
 ]
 
@@ -118,29 +133,51 @@ export function PopularResourcesSection({
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {effectiveResources.map(({ id, title, description: itemDescription, href, icon }) => {
-          const Icon = RESOURCE_ICON_MAP[icon] || FileText
+        {effectiveResources.map(
+          ({ id, title, description: itemDescription, href, icon, imageUrl, imageAlt }) => {
+            const Icon = RESOURCE_ICON_MAP[icon] || FileText
+            const hasImage = Boolean(imageUrl)
 
-          return (
-            <Link
-              key={id}
-              href={localizePath(href, locale)}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
-            >
-              <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-blue-50 p-2 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                  <Icon className="h-5 w-5" />
+            return (
+              <Link
+                key={id}
+                href={localizePath(href, locale)}
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors hover:border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-600"
+              >
+                {hasImage ? (
+                  <div className="resource-card-media">
+                    <Image
+                      src={imageUrl as string}
+                      alt={imageAlt || title}
+                      fill
+                      sizes="(min-width: 1280px) 28vw, (min-width: 768px) 46vw, 94vw"
+                      className="resource-card-media-image"
+                    />
+                  </div>
+                ) : null}
+
+                <div className="p-4">
+                  <div className="flex items-start gap-3">
+                    {!hasImage ? (
+                      <div className="rounded-xl bg-blue-50 p-2 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                    ) : null}
+
+                    <div>
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                        {title}
+                      </h3>
+                      <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
+                        {itemDescription}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{title}</h3>
-                  <p className="mt-1 text-xs leading-5 text-slate-600 dark:text-slate-400">
-                    {itemDescription}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          )
-        })}
+              </Link>
+            )
+          },
+        )}
       </div>
     </div>
   )

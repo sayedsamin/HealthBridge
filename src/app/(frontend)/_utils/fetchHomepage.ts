@@ -26,6 +26,13 @@ export type HomepageData = {
     description: string
     href: string
     icon: string
+    image?:
+      | string
+      | {
+          url?: string | null
+          alt?: string | null
+        }
+      | null
   }>
 }
 
@@ -34,7 +41,7 @@ async function getHomepageGlobal(locale: Locale): Promise<HomepageData | null> {
     const payload = await getPayload({ config: configPromise })
     const data = await payload.findGlobal({
       slug: 'homepage',
-      depth: 0,
+      depth: 1,
       locale,
       fallbackLocale: defaultLocale,
     })

@@ -121,6 +121,8 @@ export default async function HomePage() {
       description: item.description || 'Explore this resource topic.',
       href: `/resources/${item.slug}`,
       icon: item.icon,
+      imageUrl: item.imageUrl,
+      imageAlt: item.imageAlt,
     }))
 
   const d = {
@@ -153,6 +155,18 @@ export default async function HomePage() {
             description: resource.description,
             href: resolveResourceDetailHref(resource),
             icon: resource.icon,
+            imageUrl:
+              resource.image &&
+              typeof resource.image === 'object' &&
+              typeof resource.image.url === 'string'
+                ? getMediaUrl(resource.image.url)
+                : null,
+            imageAlt:
+              resource.image &&
+              typeof resource.image === 'object' &&
+              typeof resource.image.alt === 'string'
+                ? resource.image.alt
+                : resource.title,
           }))
         : DEFAULT_POPULAR_RESOURCES
 

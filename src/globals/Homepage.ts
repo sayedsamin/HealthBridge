@@ -200,6 +200,16 @@ export const Homepage: GlobalConfig = {
                 { label: 'Question', value: 'MessageCircleQuestion' },
               ],
             },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description:
+                  'Optional card image. When provided, it appears as the full top media section of the card.',
+              },
+            },
           ],
           defaultValue: [
             {

@@ -41,11 +41,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({
 
   return (
     <header
-      className="container relative z-20 border-b border-slate-100 bg-white/80 backdrop-blur-md dark:border-slate-700/50 dark:bg-slate-900/80"
+      className="relative z-20 w-full border-b border-slate-100 bg-white/80 px-4 backdrop-blur-md sm:px-6 lg:px-8 dark:border-slate-700/50 dark:bg-slate-900/80"
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <div className="flex items-center justify-between gap-4 py-4">
-        <Link href={localizePath('/', locale)}>
+      <div className="flex w-full items-center gap-6 py-4">
+        <Link className="shrink-0" href={localizePath('/', locale)}>
           <Logo loading="eager" priority="high" />
         </Link>
         <HeaderNav topicMenuItems={topicMenuItems} resourceMenuItems={resourceMenuItems} />

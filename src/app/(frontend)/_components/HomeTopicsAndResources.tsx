@@ -221,6 +221,7 @@ export function HomeTopicsAndResources({
           const topicAccent = getTopicAccent(topic.slug, topic.icon)
           const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
           const canRenderImage = Boolean(topic.iconImageUrl) && !failedImageIds.has(topic.id)
+          const hasHealthcareBackground = topic.slug === 'healthcare-system'
 
           return (
             <Link
@@ -230,10 +231,19 @@ export function HomeTopicsAndResources({
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div
-                className={`mb-4 flex h-24 items-center rounded-xl bg-gradient-to-br px-4 ${topicAccent.panel}`}
+                className={`relative mb-4 flex h-24 items-center overflow-hidden rounded-xl bg-gradient-to-br bg-cover bg-center px-4 ${topicAccent.panel}`}
+                style={
+                  hasHealthcareBackground ? { backgroundImage: "url('/Section1.png')" } : undefined
+                }
               >
+                {hasHealthcareBackground ? (
+                  <span
+                    className="absolute inset-0 bg-gradient-to-r from-slate-900/55 via-slate-900/20 to-transparent"
+                    aria-hidden="true"
+                  />
+                ) : null}
                 <span
-                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
+                  className={`relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
                 >
                   {canRenderImage ? (
                     <Image

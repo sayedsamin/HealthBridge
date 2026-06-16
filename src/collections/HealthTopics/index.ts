@@ -84,7 +84,7 @@ export const HealthTopics: CollectionConfig = {
       ],
       admin: {
         description:
-          'Icon displayed on the topic card. If an image is uploaded below, the image takes priority over this selection.',
+          'Icon displayed on the topic card and detail page badge. It stays visible even when a card image is uploaded.',
       },
     },
     {
@@ -93,7 +93,7 @@ export const HealthTopics: CollectionConfig = {
       relationTo: 'media',
       admin: {
         description:
-          'Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: at least 256x256 px (square).',
+          'Optional large image for the topic card. The selected icon above will still appear as a badge. Recommended size: at least 1200x800 px.',
       },
     },
     {
@@ -124,6 +124,15 @@ export const HealthTopics: CollectionConfig = {
           type: 'text',
           localized: true,
           admin: { description: 'Subtitle / description shown below the page heading.' },
+        },
+        {
+          name: 'detailImage',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Optional large image shown at the top of the topic detail page. Recommended size: at least 1400x900 px.',
+          },
         },
         {
           name: 'sidebarTitle',

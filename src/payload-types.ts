@@ -489,7 +489,7 @@ export interface HealthTopic {
    */
   description?: string | null;
   /**
-   * Icon displayed on the topic card. If an image is uploaded below, the image takes priority over this selection.
+   * Icon displayed on the topic card and detail page badge. It stays visible even when a card image is uploaded.
    */
   icon?:
     | (
@@ -507,7 +507,7 @@ export interface HealthTopic {
       )
     | null;
   /**
-   * Optional — upload a custom image to use as the icon instead of the selected icon above. Recommended size: at least 256x256 px (square).
+   * Optional large image for the topic card. The selected icon above will still appear as a badge. Recommended size: at least 1200x800 px.
    */
   iconImage?: (string | null) | Media;
   /**
@@ -522,6 +522,10 @@ export interface HealthTopic {
    * Subtitle / description shown below the page heading.
    */
   subtitle?: string | null;
+  /**
+   * Optional large image shown at the top of the topic detail page. Recommended size: at least 1400x900 px.
+   */
+  detailImage?: (string | null) | Media;
   /**
    * Heading text in the left sidebar box.
    */
@@ -1769,6 +1773,7 @@ export interface HealthTopicsSelect<T extends boolean = true> {
   lessonsCount?: T;
   order?: T;
   subtitle?: T;
+  detailImage?: T;
   sidebarTitle?: T;
   sidebarItems?:
     | T

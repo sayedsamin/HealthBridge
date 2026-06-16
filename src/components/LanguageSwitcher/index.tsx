@@ -8,22 +8,23 @@ import { ChevronDown } from 'lucide-react'
 import {
   languageOptions as defaultLanguageOptions,
   locales,
+  type Locale,
   type LanguageOption,
 } from '@/i18n/config'
-import { getLocaleFromPathname, localizePath, stripLocaleFromPathname } from '@/i18n/routing'
+import { localizePath, stripLocaleFromPathname } from '@/i18n/routing'
 
 type Props = {
+  locale: Locale
   className?: string
 }
 
-export function LanguageSwitcher({ className }: Props) {
+export function LanguageSwitcher({ locale, className }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const rootRef = useRef<HTMLDivElement>(null)
-  const currentLocale = getLocaleFromPathname(pathname)
   const unlocalizedPath = stripLocaleFromPathname(pathname)
-  const currentLanguage = searchParams.get('lang')?.toLowerCase() ?? currentLocale
+  const currentLanguage = searchParams.get('lang')?.toLowerCase() ?? locale
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>(defaultLanguageOptions)
   const [isOpen, setIsOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -56,7 +57,7 @@ export function LanguageSwitcher({ className }: Props) {
   const cmsLocaleSet = useMemo(() => new Set<string>(locales), [])
   const selectedLanguage =
     languageOptions.find((language) => language.code === currentLanguage) ??
-    languageOptions.find((language) => language.code === currentLocale) ??
+    languageOptions.find((language) => language.code === locale) ??
     languageOptions.find((language) => language.code === 'en') ??
     defaultLanguageOptions[0]
 

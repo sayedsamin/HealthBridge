@@ -441,7 +441,7 @@ export function HomeTopicsAndResources({
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div
-                className={`relative mb-4 flex h-24 items-center overflow-hidden rounded-xl bg-gradient-to-br bg-cover bg-center px-4 ${topicAccent.panel}`}
+                className={`relative mb-4 flex h-32 items-center overflow-hidden rounded-xl bg-gradient-to-br bg-cover bg-center px-4 ${topicAccent.panel}`}
                 style={
                   hasHealthcareBackground ? { backgroundImage: "url('/Section1.png')" } : undefined
                 }
@@ -452,26 +452,43 @@ export function HomeTopicsAndResources({
                     aria-hidden="true"
                   />
                 ) : null}
-                <span
-                  className={`relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
-                >
-                  {canRenderImage ? (
-                    <Image
-                      src={topic.iconImageUrl}
-                      alt={topic.iconImageAlt}
-                      width={46}
-                      height={46}
-                      className="h-11 w-11 object-contain"
-                      onError={() => markImageFailed(topic.id)}
-                    />
-                  ) : TopicIcon ? (
-                    <TopicIcon className="h-8 w-8" strokeWidth={1.85} />
-                  ) : (
-                    <span className="text-xl font-bold">
-                      {topic.title.trim().charAt(0).toUpperCase()}
+                {canRenderImage ? (
+                  <div className="relative z-10 flex w-full items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <Image
+                        src={topic.iconImageUrl}
+                        alt={topic.iconImageAlt}
+                        width={220}
+                        height={132}
+                        className="h-[104px] w-auto max-w-full object-contain"
+                        onError={() => markImageFailed(topic.id)}
+                      />
+                    </div>
+                    <span
+                      className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
+                    >
+                      {TopicIcon ? (
+                        <TopicIcon className="h-8 w-8" strokeWidth={1.85} />
+                      ) : (
+                        <span className="text-xl font-bold">
+                          {topic.title.trim().charAt(0).toUpperCase()}
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
+                  </div>
+                ) : (
+                  <span
+                    className={`relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
+                  >
+                    {TopicIcon ? (
+                      <TopicIcon className="h-8 w-8" strokeWidth={1.85} />
+                    ) : (
+                      <span className="text-xl font-bold">
+                        {topic.title.trim().charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </span>
+                )}
               </div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {topic.title}

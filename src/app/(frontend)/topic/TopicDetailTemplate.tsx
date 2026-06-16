@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   Ambulance,
@@ -39,7 +40,10 @@ type TopicSection = {
 type TopicDetailTemplateProps = {
   topicSlug: string
   title: string
+  iconName?: string
   subtitle: string
+  detailImageUrl?: string
+  detailImageAlt?: string
   sidebarTitle: string
   activeSidebarLabel: string
   sidebarItems: string[]
@@ -50,6 +54,19 @@ type TopicDetailTemplateProps = {
   guideUrl?: string
   guideLabel?: string
   supportPhone?: string
+}
+
+const TOPIC_ICON_MAP: Record<string, LucideIcon> = {
+  Stethoscope,
+  Hospital,
+  Ambulance,
+  ClipboardList,
+  Brain,
+  HeartPulse,
+  Syringe,
+  Shield,
+  BookOpen,
+  PhoneCall,
 }
 
 const illustrationIcons: LucideIcon[] = [
@@ -81,7 +98,10 @@ function pickSectionIcon(sectionTitle: string, index: number): LucideIcon {
 export function TopicDetailTemplate({
   topicSlug,
   title,
+  iconName = 'Stethoscope',
   subtitle,
+  detailImageUrl,
+  detailImageAlt,
   sidebarTitle,
   activeSidebarLabel,
   sidebarItems,
@@ -94,6 +114,7 @@ export function TopicDetailTemplate({
   supportPhone = '1-888-315-9257',
 }: TopicDetailTemplateProps) {
   const topicAccent = getTopicAccent(topicSlug)
+  const TopicIcon = TOPIC_ICON_MAP[iconName] ?? Stethoscope
   const sectionAnchors = sections.map((section, index) => ({
     id: `topic-section-${index}`,
     title: section.title,
@@ -195,44 +216,77 @@ export function TopicDetailTemplate({
 
       <section>
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1
-              className={`max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl ${topicAccent.arrow} dark:text-white`}
-            >
-              {title}
-            </h1>
-            <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
-              {subtitle}
-            </p>
-          </div>
-          {videoUrl ? (
-            <Link
-              href={videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`rounded-2xl border px-5 py-4 text-sm font-semibold transition-opacity hover:opacity-90 ${topicAccent.panel} border-transparent`}
-            >
-              <div className="flex items-center gap-2">
-                <PlayBadgeIcon />
-                Watch Overview Video
+          <div className="grid w-full gap-4 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+            <div>
+              <div className="flex items-start gap-3">
+                <span
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border shadow-sm ${topicAccent.frame}`}
+                >
+                  <TopicIcon className="h-7 w-7" strokeWidth={1.8} />
+                </span>
+                <div>
+                  <h1
+                    className={`max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl ${topicAccent.arrow} dark:text-white`}
+                  >
+                    {title}
+                  </h1>
+                  <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
+                    {subtitle}
+                  </p>
+                </div>
               </div>
-              <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
-                {videoDuration}
-              </div>
-            </Link>
-          ) : (
-            <div
-              className={`rounded-2xl border px-5 py-4 text-sm font-semibold ${topicAccent.panel} border-transparent`}
-            >
-              <div className="flex items-center gap-2">
-                <PlayBadgeIcon />
-                Watch Overview Video
-              </div>
-              <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
-                {videoDuration}
-              </div>
+
+              {videoUrl ? (
+                <Link
+                  href={videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-4 inline-flex rounded-2xl border px-5 py-4 text-sm font-semibold transition-opacity hover:opacity-90 ${topicAccent.panel} border-transparent`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <PlayBadgeIcon />
+                      Watch Overview Video
+                    </div>
+                    <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
+                      {videoDuration}
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div
+                  className={`mt-4 inline-flex rounded-2xl border px-5 py-4 text-sm font-semibold ${topicAccent.panel} border-transparent`}
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <PlayBadgeIcon />
+                      Watch Overview Video
+                    </div>
+                    <div className={`pl-6 text-sm font-bold ${topicAccent.arrow} dark:text-white`}>
+                      {videoDuration}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+            {detailImageUrl ? (
+              <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                <Image
+                  src={detailImageUrl}
+                  alt={detailImageAlt || title}
+                  width={960}
+                  height={720}
+                  className="h-full min-h-[240px] w-full object-cover"
+                />
+                <span
+                  className={`absolute bottom-4 left-4 flex h-14 w-14 items-center justify-center rounded-2xl border shadow-lg ${topicAccent.frame}`}
+                >
+                  <TopicIcon className="h-7 w-7" strokeWidth={1.8} />
+                </span>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="space-y-2.5">

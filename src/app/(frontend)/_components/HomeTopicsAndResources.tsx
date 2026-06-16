@@ -124,7 +124,7 @@ type QuickAccessItem = {
 }
 
 const HolisticCareIllustration = () => (
-  <svg viewBox="0 0 120 120" fill="none" className="h-36 w-36" aria-hidden="true">
+  <svg viewBox="0 0 120 120" fill="none" className="h-28 w-28" aria-hidden="true">
     <path
       d="M22 83c9-11 18-15 29-15h15c4 0 7-3 7-7 0-4-3-7-7-7H52"
       stroke="currentColor"
@@ -151,7 +151,7 @@ const HolisticCareIllustration = () => (
 )
 
 const NativeLanguageIllustration = () => (
-  <svg viewBox="0 0 120 120" fill="none" className="h-36 w-36" aria-hidden="true">
+  <svg viewBox="0 0 120 120" fill="none" className="h-28 w-28" aria-hidden="true">
     <circle cx="36" cy="49" r="14" stroke="currentColor" strokeWidth="3.5" />
     <circle cx="84" cy="44" r="10" stroke="currentColor" strokeWidth="3.5" />
     <path
@@ -178,7 +178,7 @@ const NativeLanguageIllustration = () => (
 )
 
 const AlwaysOnSupportIllustration = () => (
-  <svg viewBox="0 0 120 120" fill="none" className="h-36 w-36" aria-hidden="true">
+  <svg viewBox="0 0 120 120" fill="none" className="h-28 w-28" aria-hidden="true">
     <circle cx="60" cy="62" r="34" stroke="currentColor" strokeWidth="4" />
     <path
       d="M60 43v20l13 8"
@@ -345,7 +345,7 @@ export function HomeTopicsAndResources({
         </div>
       </div>
 
-      <div className="mt-6 rounded-3xl bg-slate-100 px-6 py-10 dark:bg-slate-900/70 sm:px-8 sm:py-12 lg:px-10">
+      <div className="mt-6 px-6 py-10 sm:px-8 sm:py-12 lg:px-10">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             A holistic approach to healthcare
@@ -363,7 +363,7 @@ export function HomeTopicsAndResources({
 
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           <article className="px-2 text-center">
-            <div className="mx-auto mb-5 inline-flex h-36 w-36 items-center justify-center text-emerald-500 dark:text-emerald-300">
+            <div className="mx-auto mb-5 inline-flex h-28 w-28 items-center justify-center text-emerald-500 dark:text-emerald-300">
               <HolisticCareIllustration />
             </div>
             <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
@@ -376,7 +376,7 @@ export function HomeTopicsAndResources({
           </article>
 
           <article className="px-2 text-center">
-            <div className="mx-auto mb-5 inline-flex h-36 w-36 items-center justify-center text-emerald-500 dark:text-emerald-300">
+            <div className="mx-auto mb-5 inline-flex h-28 w-28 items-center justify-center text-emerald-500 dark:text-emerald-300">
               <NativeLanguageIllustration />
             </div>
             <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
@@ -389,7 +389,7 @@ export function HomeTopicsAndResources({
           </article>
 
           <article className="px-2 text-center">
-            <div className="mx-auto mb-5 inline-flex h-36 w-36 items-center justify-center text-emerald-500 dark:text-emerald-300">
+            <div className="mx-auto mb-5 inline-flex h-28 w-28 items-center justify-center text-emerald-500 dark:text-emerald-300">
               <AlwaysOnSupportIllustration />
             </div>
             <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">

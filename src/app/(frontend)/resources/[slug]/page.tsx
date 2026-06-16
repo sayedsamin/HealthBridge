@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { LucideIcon } from 'lucide-react'
 import {
+  Check,
   HeartPulse,
   Hospital,
   ShieldAlert,
@@ -13,6 +14,7 @@ import {
   Languages,
   FileText,
   Pill,
+  PhoneCall,
   PlayCircle,
 } from 'lucide-react'
 
@@ -23,7 +25,7 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React, { cache } from 'react'
-import { defaultLocale, type Locale } from '@/i18n/config'
+import { defaultLocale, isCmsLocale, type Locale } from '@/i18n/config'
 import { getRequestLanguage, getRequestLocale } from '@/i18n/server'
 import { localizePath } from '@/i18n/routing'
 import type { Page } from '@/payload-types'
@@ -48,13 +50,31 @@ type ResourceDetail = {
   id: string
   title: string
   slug: string
+  sidebarTitle?: string
   description: string
   detailIntro?: string
+  videoDuration?: string
+  videoUrl?: string
+  guideUrl?: string
+  guideLabel?: string
+  supportPhone?: string
+  sections?: Array<{
+    title: string
+    description: string
+    detailPageSlug: string
+    keyPoints: string[]
+  }> | null
   detailContent?: unknown
   resourceLayout?: Page['layout'][0][] | null
   heroImage?: { url?: string; alt?: string } | null
   helpfulLinks?: HelpfulLink[] | null
   icon?: string
+}
+
+type ResourceSidebarItem = {
+  id: string
+  title: string
+  slug: string
 }
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -71,6 +91,21 @@ const ICON_MAP: Record<string, LucideIcon> = {
   FileText,
   Languages,
   PlayCircle,
+}
+
+const pickSectionIcon = (resourceTitle: string, resourceIcon?: string): LucideIcon => {
+  if (resourceIcon && ICON_MAP[resourceIcon]) {
+    return ICON_MAP[resourceIcon]
+  }
+
+  const normalized = resourceTitle.toLowerCase()
+  if (normalized.includes('lab') || normalized.includes('test')) return FlaskConical
+  if (normalized.includes('mental')) return Brain
+  if (normalized.includes('nutrition')) return Apple
+  if (normalized.includes('youth')) return HeartPulse
+  if (normalized.includes('community')) return Users
+
+  return Hospital
 }
 
 export async function generateStaticParams() {
@@ -128,8 +163,191 @@ export default async function ResourceDetailPage({ params: paramsPromise }: Args
     return <PayloadRedirects url={url} />
   }
 
+  const sidebarItems = await queryResourceSidebarItems({ locale, targetLanguage: language })
   const Icon = ICON_MAP[resource.icon || ''] ?? Hospital
+  const CardIcon = pickSectionIcon(resource.title, resource.icon)
+  const sectionItems = Array.isArray(resource.sections) ? resource.sections : []
+  const hasSectionCards = sectionItems.length > 0
   const hasHelpfulLinks = Array.isArray(resource.helpfulLinks) && resource.helpfulLinks.length > 0
+
+  if (hasSectionCards) {
+    return (
+      <main className="mx-auto w-full max-w-[1280px] px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+        <div className="grid gap-5 lg:grid-cols-[246px_minmax(0,1fr)]">
+          <aside className="space-y-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/60">
+              <h2 className="text-2xl font-semibold tracking-tight text-blue-700 dark:text-blue-300">
+                {resource.sidebarTitle || 'Resources Overview'}
+              </h2>
+              <Link
+                href={localizePath('/resources', locale)}
+                className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-blue-700 dark:text-blue-300"
+              >
+                &lt; Back to Resources
+              </Link>
+
+              <nav className="mt-4 space-y-1.5" aria-label="Resource navigation">
+                {sidebarItems.map((item) => {
+                  const href = localizePath(`/resources/${item.slug}`, locale)
+                  const isActive = item.slug === resource.slug
+
+                  return (
+                    <Link
+                      key={item.id}
+                      href={href}
+                      className={`block w-full rounded-xl px-3 py-2.5 text-left text-sm font-semibold leading-tight transition-colors ${
+                        isActive
+                          ? 'bg-blue-600 text-white shadow-sm shadow-blue-100'
+                          : 'border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50 dark:border-slate-600 dark:bg-slate-700/50 dark:text-slate-300 dark:hover:border-blue-700 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {item.title}
+                    </Link>
+                  )
+                })}
+              </nav>
+            </div>
+
+            <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-4 dark:border-blue-900/40 dark:bg-blue-900/20">
+              <h3 className="text-xl font-semibold tracking-tight text-blue-700 dark:text-blue-300">
+                Need Help?
+              </h3>
+              <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                Ask our team a question and we&apos;ll point you to the right direction.
+              </p>
+              <Link
+                href={localizePath('/contact', locale)}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm font-semibold text-blue-700 shadow-sm hover:bg-blue-100 dark:border-blue-800 dark:bg-slate-900/30 dark:text-blue-300"
+              >
+                <PhoneCall className="h-4 w-4" />
+                Ask a Question
+              </Link>
+            </div>
+
+            {resource.guideUrl ? (
+              <a
+                href={resource.guideUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl border border-blue-100 bg-blue-50/70 p-4 transition-opacity hover:opacity-90 dark:border-blue-900/40 dark:bg-blue-900/20"
+              >
+                <h3 className="flex items-center gap-1.5 text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  Download Guide
+                  <span className="ml-auto rounded bg-white/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:bg-white/10 dark:text-slate-400">
+                    PDF
+                  </span>
+                </h3>
+                <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                  {resource.guideLabel || 'A quick guide for this resource topic.'}
+                </p>
+              </a>
+            ) : null}
+          </aside>
+
+          <section>
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-blue-700 sm:text-5xl dark:text-blue-300">
+                  {resource.title}
+                </h1>
+                <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
+                  {resource.detailIntro || resource.description}
+                </p>
+              </div>
+
+              {resource.videoUrl ? (
+                <Link
+                  href={resource.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-2xl border border-blue-100 bg-blue-50/70 px-5 py-4 text-sm font-semibold text-blue-700 transition-opacity hover:opacity-90 dark:border-blue-900/40 dark:bg-blue-900/20 dark:text-blue-300"
+                >
+                  <div className="flex items-center gap-2">Watch Overview Video</div>
+                  <div className="pl-1 text-sm font-bold">{resource.videoDuration || '3 min'}</div>
+                </Link>
+              ) : null}
+            </div>
+
+            <div className="space-y-2.5">
+              {sectionItems.map((section, index) => (
+                <article
+                  key={`${section.title}-${index}`}
+                  className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-colors md:grid-cols-[214px_minmax(0,1fr)_222px] dark:border-slate-700 dark:bg-slate-800"
+                >
+                  <div className="relative flex h-28 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/30">
+                    <div className="absolute -left-8 -top-8 h-20 w-20 rounded-full bg-white/30 dark:bg-white/10" />
+                    <div className="absolute -bottom-7 -right-8 h-20 w-20 rounded-full bg-white/40 dark:bg-white/10" />
+                    <div className="z-10 rounded-full border border-blue-200 bg-white p-4 shadow-sm dark:border-blue-800 dark:bg-slate-900/50">
+                      <CardIcon
+                        className="h-11 w-11 text-blue-700 dark:text-blue-300"
+                        strokeWidth={1.75}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="text-[33px] font-semibold leading-[1.1] tracking-tight text-slate-900 dark:text-white">
+                      {index + 1}. {section.title}
+                    </h2>
+                    <p className="mt-1.5 text-[16px] leading-6 text-slate-600 dark:text-slate-300">
+                      {section.description}
+                    </p>
+
+                    {section.detailPageSlug ? (
+                      <Link
+                        href={localizePath(
+                          `/${encodeURIComponent(section.detailPageSlug)}`,
+                          locale,
+                        )}
+                        className="mt-2 inline-flex text-sm font-semibold text-blue-700 dark:text-blue-300"
+                      >
+                        Learn More <span aria-hidden="true">→</span>
+                      </Link>
+                    ) : (
+                      <span className="mt-2 inline-flex text-sm font-semibold text-slate-400 dark:text-slate-500">
+                        Learn More <span aria-hidden="true">→</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3 dark:border-blue-900/40 dark:bg-blue-900/20">
+                    <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                      Key Points:
+                    </h3>
+                    <ul className="mt-2 space-y-1.5 text-xs text-slate-700 dark:text-slate-200">
+                      {section.keyPoints.map((point) => (
+                        <li key={point} className="flex items-start gap-1.5">
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-700 dark:text-blue-300" />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/70 px-5 py-4 dark:border-blue-900/40 dark:bg-blue-900/20">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-[27px] font-semibold leading-tight tracking-tight text-blue-700 dark:text-blue-300">
+                    Need help understanding your test result?
+                  </p>
+                  <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
+                    Talk to your doctor or healthcare provider if you have questions.
+                  </p>
+                </div>
+                <p className="text-4xl font-bold tracking-tight text-blue-700 dark:text-blue-300">
+                  {resource.supportPhone || '1-888-315-9257'}
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="resource-detail-page">
@@ -289,8 +507,51 @@ const queryResourceBySlug = cache(
       id: String(translated.id),
       title: typeof translated.title === 'string' ? translated.title : '',
       slug: typeof translated.slug === 'string' ? translated.slug : '',
+      sidebarTitle:
+        typeof translated.sidebarTitle === 'string'
+          ? translated.sidebarTitle
+          : 'Resources Overview',
       description: typeof translated.description === 'string' ? translated.description : '',
       detailIntro: typeof translated.detailIntro === 'string' ? translated.detailIntro : undefined,
+      videoDuration:
+        typeof translated.videoDuration === 'string' ? translated.videoDuration : undefined,
+      videoUrl: typeof translated.videoUrl === 'string' ? translated.videoUrl : undefined,
+      guideUrl: typeof translated.guideUrl === 'string' ? translated.guideUrl : undefined,
+      guideLabel: typeof translated.guideLabel === 'string' ? translated.guideLabel : undefined,
+      supportPhone:
+        typeof translated.supportPhone === 'string' ? translated.supportPhone : undefined,
+      sections: Array.isArray(translated.sections)
+        ? translated.sections
+            .map((section) => {
+              const detailPage = section?.detailPage
+              const detailPageSlug =
+                detailPage && typeof detailPage === 'object' && 'slug' in detailPage
+                  ? typeof detailPage.slug === 'string'
+                    ? detailPage.slug
+                    : ''
+                  : ''
+
+              const keyPoints = Array.isArray(section?.keyPoints)
+                ? section.keyPoints
+                    .map((point) => {
+                      if (typeof point === 'string') return point
+                      if (point && typeof point === 'object' && 'point' in point) {
+                        return typeof point.point === 'string' ? point.point : ''
+                      }
+                      return ''
+                    })
+                    .filter((point) => point.length > 0)
+                : []
+
+              return {
+                title: typeof section?.title === 'string' ? section.title : '',
+                description: typeof section?.description === 'string' ? section.description : '',
+                detailPageSlug,
+                keyPoints,
+              }
+            })
+            .filter((section) => section.title.length > 0)
+        : null,
       detailContent: translated.detailContent,
       resourceLayout: Array.isArray(translatedRecord.resourceLayout)
         ? (translatedRecord.resourceLayout as Page['layout'][0][])
@@ -306,5 +567,40 @@ const queryResourceBySlug = cache(
         : null,
       icon: typeof translated.icon === 'string' ? translated.icon : 'Hospital',
     } satisfies ResourceDetail
+  },
+)
+
+const queryResourceSidebarItems = cache(
+  async ({ locale, targetLanguage }: { locale: Locale; targetLanguage: string }) => {
+    const payload = await getPayload({ config: configPromise })
+
+    const result = await payload.find({
+      collection: 'resource-items',
+      depth: 0,
+      locale,
+      fallbackLocale: defaultLocale,
+      draft: false,
+      limit: 100,
+      sort: 'order',
+      pagination: false,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+      },
+    })
+
+    const docs =
+      targetLanguage === defaultLocale || isCmsLocale(targetLanguage)
+        ? result.docs
+        : await translateContentDeep(result.docs, targetLanguage)
+
+    return docs
+      .map((doc) => ({
+        id: String(doc.id),
+        title: typeof doc.title === 'string' ? doc.title : '',
+        slug: typeof doc.slug === 'string' ? doc.slug : '',
+      }))
+      .filter((doc) => doc.title.length > 0 && doc.slug.length > 0) as ResourceSidebarItem[]
   },
 )

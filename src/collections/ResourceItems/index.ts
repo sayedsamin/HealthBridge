@@ -30,6 +30,15 @@ export const ResourceItems: CollectionConfig = {
   },
   fields: [
     {
+      name: 'sidebarTitle',
+      type: 'text',
+      localized: true,
+      defaultValue: 'Resources Overview',
+      admin: {
+        description: 'Heading shown in the left sidebar on /resources/[slug].',
+      },
+    },
+    {
       name: 'title',
       type: 'text',
       localized: true,
@@ -70,6 +79,99 @@ export const ResourceItems: CollectionConfig = {
           admin: {
             description: 'Short intro paragraph shown near the top of the detail page.',
           },
+        },
+        {
+          name: 'videoDuration',
+          type: 'text',
+          localized: true,
+          defaultValue: '3 min',
+          admin: {
+            description: 'Duration shown beside the Watch Overview Video card.',
+          },
+        },
+        {
+          name: 'videoUrl',
+          type: 'text',
+          admin: {
+            description: 'Optional URL opened from the Watch Overview Video card.',
+          },
+        },
+        {
+          name: 'guideUrl',
+          type: 'text',
+          admin: {
+            description: 'Optional PDF URL used by the Download Guide card in the left sidebar.',
+          },
+        },
+        {
+          name: 'guideLabel',
+          type: 'text',
+          localized: true,
+          admin: {
+            description: 'Optional label for the download guide card.',
+          },
+        },
+        {
+          name: 'supportPhone',
+          type: 'text',
+          defaultValue: '1-888-315-9257',
+          admin: {
+            description: 'Phone number shown in the bottom support strip.',
+          },
+        },
+        {
+          name: 'sections',
+          type: 'array',
+          labels: {
+            singular: 'Section',
+            plural: 'Sections',
+          },
+          admin: {
+            description:
+              'Main cards shown on the resource detail page. Learn More opens the linked Page document.',
+            initCollapsed: true,
+            isSortable: false,
+          },
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              localized: true,
+              required: true,
+            },
+            {
+              name: 'description',
+              type: 'textarea',
+              localized: true,
+              required: true,
+            },
+            {
+              name: 'detailPage',
+              type: 'relationship',
+              relationTo: 'pages',
+              required: true,
+              admin: {
+                description:
+                  'Select a Page from the Pages collection. Clicking Learn More opens this page.',
+              },
+            },
+            {
+              name: 'keyPoints',
+              type: 'array',
+              admin: {
+                description: 'Bullets shown in the Key Points panel.',
+                isSortable: false,
+              },
+              fields: [
+                {
+                  name: 'point',
+                  type: 'text',
+                  localized: true,
+                  required: true,
+                },
+              ],
+            },
+          ],
         },
         {
           name: 'detailContent',

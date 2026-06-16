@@ -1000,6 +1000,10 @@ export interface Form {
 export interface ResourceItem {
   id: string;
   /**
+   * Heading shown in the left sidebar on /resources/[slug].
+   */
+  sidebarTitle?: string | null;
+  /**
    * Card heading shown in the resource grid.
    */
   title: string;
@@ -1015,6 +1019,49 @@ export interface ResourceItem {
    * Short intro paragraph shown near the top of the detail page.
    */
   detailIntro: string;
+  /**
+   * Duration shown beside the Watch Overview Video card.
+   */
+  videoDuration?: string | null;
+  /**
+   * Optional URL opened from the Watch Overview Video card.
+   */
+  videoUrl?: string | null;
+  /**
+   * Optional PDF URL used by the Download Guide card in the left sidebar.
+   */
+  guideUrl?: string | null;
+  /**
+   * Optional label for the download guide card.
+   */
+  guideLabel?: string | null;
+  /**
+   * Phone number shown in the bottom support strip.
+   */
+  supportPhone?: string | null;
+  /**
+   * Main cards shown on the resource detail page. Learn More opens the linked Page document.
+   */
+  sections?:
+    | {
+        title: string;
+        description: string;
+        /**
+         * Select a Page from the Pages collection. Clicking Learn More opens this page.
+         */
+        detailPage: string | Page;
+        /**
+         * Bullets shown in the Key Points panel.
+         */
+        keyPoints?:
+          | {
+              point: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Legacy plain-text content. Keep existing entries as-is or use Resource Layout for visual sections.
    */
@@ -1756,10 +1803,30 @@ export interface HealthTopicsSelect<T extends boolean = true> {
  * via the `definition` "resource-items_select".
  */
 export interface ResourceItemsSelect<T extends boolean = true> {
+  sidebarTitle?: T;
   title?: T;
   slug?: T;
   description?: T;
   detailIntro?: T;
+  videoDuration?: T;
+  videoUrl?: T;
+  guideUrl?: T;
+  guideLabel?: T;
+  supportPhone?: T;
+  sections?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        detailPage?: T;
+        keyPoints?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   detailContent?: T;
   resourceLayout?:
     | T

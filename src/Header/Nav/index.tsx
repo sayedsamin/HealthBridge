@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { getLocaleFromPathname, localizePath, stripLocaleFromPathname } from '@/i18n/routing'
+import { localizePath, stripLocaleFromPathname } from '@/i18n/routing'
+import type { Locale } from '@/i18n/config'
 
 type HeaderNavProps = {
+  locale: Locale
   topicMenuItems: Array<{
     slug: string
     label: string
@@ -17,7 +19,11 @@ type HeaderNavProps = {
   }>
 }
 
-export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMenuItems }) => {
+export const HeaderNav: React.FC<HeaderNavProps> = ({
+  locale,
+  topicMenuItems,
+  resourceMenuItems,
+}) => {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [topicOpen, setTopicOpen] = useState(false)
@@ -27,7 +33,6 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
   const navRef = useRef<HTMLElement>(null)
   const topicRef = useRef<HTMLDivElement>(null)
   const resourcesRef = useRef<HTMLDivElement>(null)
-  const locale = getLocaleFromPathname(pathname)
   const activePathname = stripLocaleFromPathname(pathname)
 
   useEffect(() => {
@@ -65,13 +70,20 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
 
   const isTopicActive = activePathname.startsWith('/topic')
   const isResourcesActive = activePathname.startsWith('/resources')
+  const isHomeActive = activePathname === '/'
+  const isAboutActive = activePathname.startsWith('/about')
+  const isContactActive = activePathname.startsWith('/contact')
 
   return (
     <nav className="relative flex flex-1 justify-end" ref={navRef}>
       <div className="relative hidden flex-1 items-center justify-center gap-8 pr-28 text-base lg:flex xl:gap-12">
         <Link
           href={localizePath('/', locale)}
-          className="font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
+          className={`border-b-2 pb-0.5 font-medium transition-colors ${
+            isHomeActive
+              ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+              : 'border-transparent text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400'
+          }`}
         >
           Home
         </Link>
@@ -80,7 +92,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
           <button
             type="button"
             onClick={() => setTopicOpen((prev) => !prev)}
-            className={`flex items-center gap-1 font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${isTopicActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}
+            className={`flex items-center gap-1 border-b-2 pb-0.5 font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+              isTopicActive
+                ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                : 'border-transparent text-slate-700 dark:text-slate-300'
+            }`}
           >
             Topics
             <svg
@@ -127,7 +143,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
           <button
             type="button"
             onClick={() => setResourcesOpen((prev) => !prev)}
-            className={`flex items-center gap-1 font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${isResourcesActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}
+            className={`flex items-center gap-1 border-b-2 pb-0.5 font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+              isResourcesActive
+                ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                : 'border-transparent text-slate-700 dark:text-slate-300'
+            }`}
           >
             Resources
             <svg
@@ -172,9 +192,24 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
 
         <Link
           href={localizePath('/about-us', locale)}
-          className="font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
+          className={`border-b-2 pb-0.5 font-medium transition-colors ${
+            isAboutActive
+              ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+              : 'border-transparent text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400'
+          }`}
         >
           About Us
+        </Link>
+
+        <Link
+          href={localizePath('/contact', locale)}
+          className={`border-b-2 pb-0.5 font-medium transition-colors ${
+            isContactActive
+              ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+              : 'border-transparent text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400'
+          }`}
+        >
+          Contact
         </Link>
 
         <div className="absolute right-0">
@@ -209,7 +244,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
           <div className="flex flex-col gap-2 text-sm">
             <Link
               href={localizePath('/', locale)}
-              className="rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
+              className={`rounded-lg px-3 py-2 font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50 ${
+                isHomeActive
+                  ? 'text-blue-600 underline decoration-blue-600 underline-offset-4 dark:text-blue-400 dark:decoration-blue-400'
+                  : 'text-slate-700 dark:text-slate-300'
+              }`}
             >
               Home
             </Link>
@@ -300,9 +339,24 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
 
             <Link
               href={localizePath('/about-us', locale)}
-              className="rounded-lg px-3 py-2 font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700/50"
+              className={`rounded-lg px-3 py-2 font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50 ${
+                isAboutActive
+                  ? 'text-blue-600 underline decoration-blue-600 underline-offset-4 dark:text-blue-400 dark:decoration-blue-400'
+                  : 'text-slate-700 dark:text-slate-300'
+              }`}
             >
               About Us
+            </Link>
+
+            <Link
+              href={localizePath('/contact', locale)}
+              className={`rounded-lg px-3 py-2 font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50 ${
+                isContactActive
+                  ? 'text-blue-600 underline decoration-blue-600 underline-offset-4 dark:text-blue-400 dark:decoration-blue-400'
+                  : 'text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              Contact
             </Link>
 
             <div className="mt-2 border-t border-slate-200 pt-3 dark:border-slate-700">

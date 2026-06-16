@@ -154,22 +154,33 @@ export function TopicSearchFilter({ locale, topics }: Props) {
               <div
                 className={`mb-4 flex h-36 items-center rounded-xl bg-gradient-to-br px-5 ${topicAccent.panel}`}
               >
-                <span
-                  className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
-                >
-                  {canRenderImage ? (
-                    <Image
-                      src={t.iconImageUrl}
-                      alt={t.iconImageAlt}
-                      width={58}
-                      height={58}
-                      className="h-14 w-14 object-contain"
-                      onError={() => markImageFailed(t.id)}
-                    />
-                  ) : (
+                {canRenderImage ? (
+                  <>
+                    <div className="flex min-w-0 flex-1 items-center">
+                      <Image
+                        src={t.iconImageUrl}
+                        alt={t.iconImageAlt}
+                        width={170}
+                        height={108}
+                        className="h-[108px] w-auto max-w-full object-contain"
+                        style={{ width: 'auto' }}
+                        onError={() => markImageFailed(t.id)}
+                      />
+                    </div>
+
+                    <span
+                      className={`ml-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
+                    >
+                      <TopicIcon className="h-7 w-7" strokeWidth={1.85} />
+                    </span>
+                  </>
+                ) : (
+                  <span
+                    className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-full border shadow-sm ${topicAccent.frame}`}
+                  >
                     <TopicIcon className="h-10 w-10" strokeWidth={1.85} />
-                  )}
-                </span>
+                  </span>
+                )}
               </div>
 
               <div className="flex-1">

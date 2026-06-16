@@ -8,11 +8,15 @@ import {
   Brain,
   ChevronRight,
   ClipboardCheck,
+  FileText,
   FlaskConical,
   HeartPulse,
+  HelpingHand,
   Hospital,
   MessageCircleQuestion,
   PhoneCall,
+  Salad,
+  ShieldCheck,
   ShieldPlus,
   Stethoscope,
   Syringe,
@@ -99,6 +103,110 @@ const TOPIC_ICON_MAP: Record<string, LucideIcon> = {
   MessageCircleQuestion,
 }
 
+const RESOURCE_ICON_MAP: Record<string, LucideIcon> = {
+  FlaskConical,
+  Salad,
+  HelpingHand,
+  FileText,
+  ShieldCheck,
+  MessageCircleQuestion,
+}
+
+type QuickAccessItem = {
+  id: string
+  title: string
+  href: string
+  iconName: string | null
+  imageUrl: string | null
+  imageAlt: string
+  kind: 'topic' | 'resource'
+  topicSlug?: string
+}
+
+const HolisticCareIllustration = () => (
+  <svg viewBox="0 0 120 120" fill="none" className="h-28 w-28" aria-hidden="true">
+    <path
+      d="M22 83c9-11 18-15 29-15h15c4 0 7-3 7-7 0-4-3-7-7-7H52"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M20 84l11 17m53-30l10-4c5-2 10 3 8 8-1 2-3 4-6 5l-15 6c-4 2-8 3-12 3H43"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M60 22c7-8 20-8 27 0 8 9 8 22 0 30L60 80 33 52c-8-8-8-21 0-30 7-8 20-8 27 0Z"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M60 33v14m-7-7h14" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+  </svg>
+)
+
+const NativeLanguageIllustration = () => (
+  <svg viewBox="0 0 120 120" fill="none" className="h-28 w-28" aria-hidden="true">
+    <circle cx="36" cy="49" r="14" stroke="currentColor" strokeWidth="3.5" />
+    <circle cx="84" cy="44" r="10" stroke="currentColor" strokeWidth="3.5" />
+    <path
+      d="M26 72c3-6 8-10 15-10s12 4 15 10m36-19c-2-4-5-6-8-6s-6 2-8 6"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+    />
+    <path
+      d="M48 56l20 15m-2-26l10 7"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+    />
+    <path
+      d="M31 89h35l10 9v-9h13c5 0 9-4 9-9V67c0-5-4-9-9-9H31c-5 0-9 4-9 9v13c0 5 4 9 9 9Z"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M37 73h24m-24 8h34" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+  </svg>
+)
+
+const AlwaysOnSupportIllustration = () => (
+  <svg viewBox="0 0 120 120" fill="none" className="h-28 w-28" aria-hidden="true">
+    <circle cx="60" cy="62" r="34" stroke="currentColor" strokeWidth="4" />
+    <path
+      d="M60 43v20l13 8"
+      stroke="currentColor"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M32 30l-8-8m72 8 8-8" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+    <path
+      d="M94 34a22 22 0 1 1-12-20"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M91 16h10V6"
+      stroke="currentColor"
+      strokeWidth="3.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M101 6 91 16" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+    <path d="M45 86h30" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+  </svg>
+)
+
 export function HomeTopicsAndResources({
   locale,
   topics,
@@ -134,7 +242,33 @@ export function HomeTopicsAndResources({
     [showAllTopics, effectiveTopics],
   )
 
-  const quickTopics = useMemo(() => effectiveTopics.slice(0, 6), [effectiveTopics])
+  const quickAccessItems = useMemo<QuickAccessItem[]>(() => {
+    const topicItems = effectiveTopics.slice(0, 3).map((topic) => ({
+      id: `topic-${topic.id}`,
+      title: topic.title,
+      href: getTopicHref(topic.slug),
+      iconName: topic.icon,
+      imageUrl: topic.iconImageUrl,
+      imageAlt: topic.iconImageAlt,
+      kind: 'topic' as const,
+      topicSlug: topic.slug,
+    }))
+
+    const resourceItems = (popularResources || [])
+      .filter((resource) => resource?.id && resource?.title && resource?.href)
+      .slice(0, 3)
+      .map((resource) => ({
+        id: `resource-${resource.id}`,
+        title: resource.title,
+        href: localizePath(resource.href, locale),
+        iconName: resource.icon,
+        imageUrl: resource.imageUrl || null,
+        imageAlt: resource.imageAlt || resource.title,
+        kind: 'resource' as const,
+      }))
+
+    return [...topicItems, ...resourceItems]
+  }, [effectiveTopics, popularResources, locale])
 
   const markImageFailed = (topicId: string) => {
     setFailedImageIds((prev) => {
@@ -151,16 +285,34 @@ export function HomeTopicsAndResources({
         <p className="px-2 text-sm font-semibold text-slate-500 dark:text-slate-400">
           Quick Access
         </p>
+        <p className="mt-1 px-2 text-xs text-slate-500 dark:text-slate-400">
+          Major health topics and resources
+        </p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {quickTopics.map((topic, index) => {
-            const topicAccent = getTopicAccent(topic.slug, topic.icon)
-            const TopicIcon = topic.icon ? TOPIC_ICON_MAP[topic.icon] : undefined
-            const canRenderImage = Boolean(topic.iconImageUrl) && !failedImageIds.has(topic.id)
+          {quickAccessItems.map((item, index) => {
+            const topicAccent =
+              item.kind === 'topic'
+                ? getTopicAccent(item.topicSlug || 'healthcare-system', item.iconName)
+                : {
+                    card: 'hover:border-blue-300 dark:hover:border-blue-600',
+                    frame:
+                      'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+                    arrow: 'text-blue-700 dark:text-blue-300',
+                  }
+            const TopicIcon =
+              item.kind === 'topic'
+                ? item.iconName
+                  ? TOPIC_ICON_MAP[item.iconName]
+                  : undefined
+                : item.iconName
+                  ? RESOURCE_ICON_MAP[item.iconName]
+                  : undefined
+            const canRenderImage = Boolean(item.imageUrl) && !failedImageIds.has(item.id)
 
             return (
               <Link
-                key={`quick-${topic.id}`}
-                href={getTopicHref(topic.slug)}
+                key={item.id}
+                href={item.href}
                 className={`group animate-fadeInScale inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 ${topicAccent.card}`}
                 style={{ animationDelay: `${index * 0.08}s` }}
               >
@@ -169,27 +321,85 @@ export function HomeTopicsAndResources({
                 >
                   {canRenderImage ? (
                     <Image
-                      src={topic.iconImageUrl}
-                      alt={topic.iconImageAlt}
+                      src={item.imageUrl as string}
+                      alt={item.imageAlt}
                       width={28}
                       height={28}
-                      className="h-7 w-7 object-contain"
-                      onError={() => markImageFailed(topic.id)}
+                      className="h-7 w-auto max-w-7 object-contain"
+                      onError={() => markImageFailed(item.id)}
                     />
                   ) : TopicIcon ? (
                     <TopicIcon className="h-5 w-5" strokeWidth={1.9} />
                   ) : (
                     <span className="text-sm font-bold">
-                      {topic.title.trim().charAt(0).toUpperCase()}
+                      {item.title.trim().charAt(0).toUpperCase()}
                     </span>
                   )}
                 </span>
 
-                <span className="min-w-0 flex-1 truncate leading-5">{topic.title}</span>
+                <span className="min-w-0 flex-1 truncate leading-5">{item.title}</span>
                 <ChevronRight className={`h-4 w-4 shrink-0 ${topicAccent.arrow}`} />
               </Link>
             )
           })}
+        </div>
+      </div>
+
+      <div className="mt-6 px-6 py-10 sm:px-8 sm:py-12 lg:px-10">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            A holistic approach to healthcare
+          </h2>
+          <p className="mt-1 max-w-4xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+            Get information, support and tools to improve health outcomes as a newcomer in Canada.{' '}
+            <Link
+              href={localizePath('/resources', locale)}
+              className="font-semibold text-blue-700 underline decoration-blue-300 underline-offset-4 transition-colors hover:text-blue-800 dark:text-blue-400 dark:decoration-blue-700 dark:hover:text-blue-300"
+            >
+              Learn about our resources
+            </Link>
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-8 md:grid-cols-3">
+          <article className="px-2 text-center">
+            <div className="mx-auto mb-5 inline-flex h-28 w-28 items-center justify-center text-emerald-500 dark:text-emerald-300">
+              <HolisticCareIllustration />
+            </div>
+            <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
+              Take control of your health
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
+              Explore major health topics and practical resources designed for newcomers and
+              families in Canada.
+            </p>
+          </article>
+
+          <article className="px-2 text-center">
+            <div className="mx-auto mb-5 inline-flex h-28 w-28 items-center justify-center text-emerald-500 dark:text-emerald-300">
+              <NativeLanguageIllustration />
+            </div>
+            <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
+              Access health topics and resources in your native language
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
+              Find culturally responsive guidance in familiar language so healthcare navigation in
+              Canada feels clear, safe and practical.
+            </p>
+          </article>
+
+          <article className="px-2 text-center">
+            <div className="mx-auto mb-5 inline-flex h-28 w-28 items-center justify-center text-emerald-500 dark:text-emerald-300">
+              <AlwaysOnSupportIllustration />
+            </div>
+            <p className="text-lg font-semibold leading-tight text-slate-900 dark:text-white">
+              Get online support 24/7
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-400">
+              Access health learning, safety resources, and essential service navigation whenever
+              you need it.
+            </p>
+          </article>
         </div>
       </div>
 

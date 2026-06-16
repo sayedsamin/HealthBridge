@@ -154,13 +154,15 @@ export default async function AboutPage() {
               >
                 {member.image?.url && (
                   <div className="mb-4 flex justify-center">
-                    <Image
-                      src={member.image.url}
-                      alt={member.image.alt || member.name}
-                      width={120}
-                      height={120}
-                      className="h-28 w-28 rounded-full object-cover"
-                    />
+                    <div className="relative h-28 w-28 overflow-hidden rounded-full">
+                      <Image
+                        src={member.image.url}
+                        alt={member.image.alt || member.name}
+                        fill
+                        sizes="112px"
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
                 )}
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white">

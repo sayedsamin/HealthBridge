@@ -213,7 +213,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
         </Link>
 
         <div className="absolute right-0">
-          <LanguageSwitcher />
+          <LanguageSwitcher locale={locale} />
         </div>
       </div>
 
@@ -360,7 +360,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
             </Link>
 
             <div className="mt-2 border-t border-slate-200 pt-3 dark:border-slate-700">
-              <LanguageSwitcher />
+              <LanguageSwitcher locale={locale} />
             </div>
           </div>
         </div>

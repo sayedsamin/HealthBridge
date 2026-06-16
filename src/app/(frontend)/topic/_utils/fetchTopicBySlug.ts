@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import { unstable_cache } from 'next/cache'
 import { draftMode } from 'next/headers'
 import { translateContentDeep } from '@/utilities/translateContent'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { toKebabCase } from '@/utilities/toKebabCase'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -39,6 +40,7 @@ export type TopicFromPayload = {
   lessonsCount?: number
   order?: number
   subtitle?: string
+  detailImage?: MediaFromPayload | string | null
   sidebarTitle?: string
   sidebarItems?: Array<{ id?: string; item: string }>
   videoDuration?: string
@@ -204,10 +206,18 @@ export const fetchAllTopicsUncached = async (
 // ─── Converter: Payload → TopicDetailTemplate props ──────────────────────────
 
 export function toTemplateProps(topic: TopicFromPayload, activeSidebarLabel?: string) {
+  const detailImage =
+    topic.detailImage && typeof topic.detailImage === 'object'
+      ? (topic.detailImage as MediaFromPayload)
+      : null
+
   return {
     topicSlug: topic.slug,
     title: topic.title,
+    iconName: topic.icon ?? 'Stethoscope',
     subtitle: topic.subtitle ?? '',
+    detailImageUrl: getMediaUrl(detailImage?.url) || '',
+    detailImageAlt: detailImage?.alt ?? topic.title,
     sidebarTitle: topic.sidebarTitle ?? 'Topics Overview',
     activeSidebarLabel: activeSidebarLabel ?? topic.sidebarItems?.[0]?.item ?? topic.title,
     sidebarItems: topic.sidebarItems?.map((s) => s.item) ?? [],

@@ -183,17 +183,17 @@ export default async function HomePage() {
         {/* Background image */}
         <div className="hero-bg-image absolute inset-0 -z-20" aria-hidden="true" />
 
-        {/* Left-to-right flow overlays: brighter left content zone, stronger right intensity */}
+        {/* Keep the copy readable on the left while revealing the photo on the right. */}
         <div
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-50/95 via-blue-50/74 via-42% to-blue-900/24 dark:from-slate-950/95 dark:via-slate-900/80 dark:to-slate-900/30"
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-blue-50/95 via-blue-50/70 via-38% to-transparent to-68% dark:from-slate-950/95 dark:via-slate-900/72 dark:to-transparent"
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute inset-y-0 right-0 -z-10 w-[54%] bg-gradient-to-l from-blue-900/32 via-blue-700/16 to-transparent dark:from-slate-950/50 dark:via-slate-900/20"
+          className="pointer-events-none absolute inset-y-0 right-0 -z-10 w-[35%] bg-gradient-to-l from-blue-900/8 to-transparent dark:from-slate-950/20"
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute -right-16 -top-6 -z-10 h-[120%] w-[46%] bg-gradient-to-b from-cyan-300/14 via-sky-500/6 to-blue-900/14 blur-2xl"
+          className="pointer-events-none absolute -right-16 -top-6 -z-10 h-[120%] w-[38%] bg-gradient-to-b from-cyan-300/5 via-transparent to-blue-900/5 blur-2xl"
           aria-hidden="true"
         />
         <div

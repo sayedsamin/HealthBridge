@@ -26,6 +26,10 @@ export default async function AboutPage() {
   const cmsData = await fetchAboutGlobal(locale, language)
 
   const data = cmsData || STATIC_ABOUT_FALLBACK
+  const hasTeamSection =
+    Boolean(data.teamTitle?.trim()) ||
+    Boolean(data.teamDescription?.trim()) ||
+    Boolean(data.teamMembers && data.teamMembers.length > 0)
 
   return (
     <main className="w-full overflow-x-hidden bg-white dark:bg-slate-950">
@@ -137,48 +141,54 @@ export default async function AboutPage() {
       )}
 
       {/* Team Section */}
-      {data.teamMembers && data.teamMembers.length > 0 && (
+      {hasTeamSection && (
         <section className="mx-auto max-w-[1280px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <h2 className="text-center text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
-            {data.teamTitle}
+            {data.teamTitle || 'Meet Our Team'}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-slate-600 dark:text-slate-400">
-            {data.teamDescription}
+            {data.teamDescription || 'Learn more about the people behind HealthBridge.'}
           </p>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {data.teamMembers.map((member) => (
-              <div
-                key={member.name}
-                className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-slate-800 dark:bg-slate-800"
-              >
-                {member.image?.url && (
-                  <div className="mb-4 flex justify-center">
-                    <div className="relative h-28 w-28 overflow-hidden rounded-full">
-                      <Image
-                        src={member.image.url}
-                        alt={member.image.alt || member.name}
-                        fill
-                        sizes="112px"
-                        className="object-cover"
-                      />
+          {data.teamMembers && data.teamMembers.length > 0 ? (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {data.teamMembers.map((member) => (
+                <div
+                  key={member.name}
+                  className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-slate-800 dark:bg-slate-800"
+                >
+                  {member.image?.url && (
+                    <div className="mb-4 flex justify-center">
+                      <div className="relative h-28 w-28 overflow-hidden rounded-full">
+                        <Image
+                          src={member.image.url}
+                          alt={member.image.alt || member.name}
+                          fill
+                          sizes="112px"
+                          className="object-cover"
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                  {member.name}
-                </h3>
-                <p className="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">
-                  {member.role}
-                </p>
-                {member.bio && (
-                  <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                    {member.bio}
+                  )}
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
+                    {member.name}
+                  </h3>
+                  <p className="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">
+                    {member.role}
                   </p>
-                )}
-              </div>
-            ))}
-          </div>
+                  {member.bio && (
+                    <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                      {member.bio}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+              Team member profiles will appear here once added in Payload Admin.
+            </div>
+          )}
         </section>
       )}
 

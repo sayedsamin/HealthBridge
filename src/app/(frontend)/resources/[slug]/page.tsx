@@ -343,6 +343,53 @@ export default async function ResourceDetailPage({ params: paramsPromise }: Args
                 </p>
               </div>
             </div>
+
+            {Array.isArray(resource.resourceLayout) && resource.resourceLayout.length > 0 ? (
+              <div className="mt-6">
+                <RenderBlocks blocks={resource.resourceLayout} locale={locale} />
+              </div>
+            ) : resource.detailContent ? (
+              <RichText
+                className="mt-6"
+                data={resource.detailContent as Parameters<typeof RichText>[0]['data']}
+                enableGutter={false}
+              />
+            ) : null}
+
+            {hasHelpfulLinks && (
+              <section className="mt-6" aria-label="Helpful links">
+                <h2 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                  Helpful links
+                </h2>
+                <ul className="mt-3 space-y-3">
+                  {(resource.helpfulLinks || []).map((link) => {
+                    const href = link?.href || ''
+                    const label = link?.label || 'Open resource'
+                    const isExternal = href.startsWith('http://') || href.startsWith('https://')
+
+                    if (!href) return null
+
+                    return (
+                      <li key={link?.id || `${label}-${href}`}>
+                        <a
+                          href={href}
+                          className="font-semibold text-blue-700 hover:underline dark:text-blue-300"
+                          target={isExternal ? '_blank' : undefined}
+                          rel={isExternal ? 'noreferrer noopener' : undefined}
+                        >
+                          {label}
+                        </a>
+                        {link?.description && (
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {link.description}
+                          </p>
+                        )}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </section>
+            )}
           </section>
         </div>
       </main>

@@ -75,8 +75,8 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
   const isContactActive = activePathname.startsWith('/contact')
 
   return (
-    <nav className="relative" ref={navRef}>
-      <div className="hidden items-center gap-4 text-base md:flex">
+    <nav className="relative flex flex-1 justify-end" ref={navRef}>
+      <div className="relative hidden flex-1 items-center justify-center gap-8 pr-28 text-base lg:flex xl:gap-12">
         <Link
           href={localizePath('/', locale)}
           className={`border-b-2 pb-0.5 font-medium transition-colors ${
@@ -212,14 +212,16 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
           Contact
         </Link>
 
-        <LanguageSwitcher />
+        <div className="absolute right-0">
+          <LanguageSwitcher />
+        </div>
       </div>
 
       <button
         aria-controls="mobile-nav-panel"
         aria-expanded={menuOpen}
         aria-label="Toggle menu"
-        className="inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-700 transition-colors hover:bg-slate-50 md:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
+        className="inline-flex items-center justify-center rounded-lg border border-slate-200 p-2 text-slate-700 transition-colors hover:bg-slate-50 lg:hidden dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
         onClick={() => setMenuOpen((prev) => !prev)}
         type="button"
       >
@@ -237,7 +239,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({
       {menuOpen && (
         <div
           id="mobile-nav-panel"
-          className="absolute right-0 top-14 z-30 w-64 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl md:hidden dark:border-slate-700 dark:bg-slate-800"
+          className="absolute right-0 top-14 z-30 w-64 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl lg:hidden dark:border-slate-700 dark:bg-slate-800"
         >
           <div className="flex flex-col gap-2 text-sm">
             <Link

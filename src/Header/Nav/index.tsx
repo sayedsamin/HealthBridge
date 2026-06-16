@@ -4,9 +4,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { getLocaleFromPathname, localizePath, stripLocaleFromPathname } from '@/i18n/routing'
+import { localizePath, stripLocaleFromPathname } from '@/i18n/routing'
+import type { Locale } from '@/i18n/config'
 
 type HeaderNavProps = {
+  locale: Locale
   topicMenuItems: Array<{
     slug: string
     label: string
@@ -17,7 +19,11 @@ type HeaderNavProps = {
   }>
 }
 
-export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMenuItems }) => {
+export const HeaderNav: React.FC<HeaderNavProps> = ({
+  locale,
+  topicMenuItems,
+  resourceMenuItems,
+}) => {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [topicOpen, setTopicOpen] = useState(false)
@@ -27,7 +33,6 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ topicMenuItems, resourceMe
   const navRef = useRef<HTMLElement>(null)
   const topicRef = useRef<HTMLDivElement>(null)
   const resourcesRef = useRef<HTMLDivElement>(null)
-  const locale = getLocaleFromPathname(pathname)
   const activePathname = stripLocaleFromPathname(pathname)
 
   useEffect(() => {

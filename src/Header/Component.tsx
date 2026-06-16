@@ -24,5 +24,11 @@ export async function Header() {
       label: resource.title,
     }))
 
-  return <HeaderClient topicMenuItems={topicMenuItems} resourceMenuItems={resourceMenuItems} />
+  return (
+    <HeaderClient
+      locale={locale}
+      topicMenuItems={topicMenuItems}
+      resourceMenuItems={resourceMenuItems}
+    />
+  )
 }

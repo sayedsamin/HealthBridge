@@ -1,6 +1,7 @@
 'use client'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { getLocaleFromPathname, localizePath } from '@/i18n/routing'
+import { localizePath } from '@/i18n/routing'
+import type { Locale } from '@/i18n/config'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -9,6 +10,7 @@ import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
 
 type HeaderClientProps = {
+  locale: Locale
   topicMenuItems: Array<{
     slug: string
     label: string
@@ -20,6 +22,7 @@ type HeaderClientProps = {
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({
+  locale,
   topicMenuItems,
   resourceMenuItems,
 }) => {
@@ -27,7 +30,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
-  const locale = getLocaleFromPathname(pathname)
 
   useEffect(() => {
     setHeaderTheme(null)
@@ -49,7 +51,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({
           <Link href={localizePath('/', locale)}>
             <Logo loading="eager" priority="high" />
           </Link>
-          <HeaderNav topicMenuItems={topicMenuItems} resourceMenuItems={resourceMenuItems} />
+          <HeaderNav
+            locale={locale}
+            topicMenuItems={topicMenuItems}
+            resourceMenuItems={resourceMenuItems}
+          />
         </div>
       </header>
 
